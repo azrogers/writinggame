@@ -9,9 +9,9 @@ impl Reject for ParserError {}
 #[derive(Serialize)]
 #[serde(tag = "type")]
 pub enum SocketError {
-    Parse(String),
-    InvalidAction,
-    ServerError,
-    AuthError,
-    NotFound,
+  Parse(String),
+  InvalidAction,
+  ServerError,
+  AuthError,
+  GameNotFound,
 }
