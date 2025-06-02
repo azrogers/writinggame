@@ -2,6 +2,7 @@ use as_any::{AsAny, Downcast};
 
 pub mod game;
 pub mod user;
+pub mod vote;
 
 pub trait ImplState: AsAny + Send + Sync {
   fn to_public_state(&self) -> serde_json::Value;

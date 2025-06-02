@@ -5,7 +5,7 @@ use tokio::sync::{mpsc, RwLock};
 use uuid::Uuid;
 use warp::filters::ws::Message;
 
-use crate::models::{game::Game, user::User};
+use crate::models::{game::Game, user::User, vote::Vote};
 
 pub struct SessionState {
   pub tx: mpsc::UnboundedSender<Message>,
@@ -21,6 +21,8 @@ pub struct Database {
   pub code_to_game: Arc<DashMap<String, Uuid>>,
   pub user_to_session: Arc<DashMap<Uuid, Uuid>>,
   pub game_to_sessions: Arc<DashMap<Uuid, HashSet<Uuid>>>,
+  pub votes: Arc<DashMap<Uuid, Vote>>,
+  pub game_to_vote: Arc<DashMap<Uuid, Uuid>>,
 }
 
 impl Database {
@@ -74,6 +76,12 @@ impl Database {
         session.game_id = None;
       }
     }
+
+    if let Some(vote_id) = self.game_to_vote.get(&game.id) {
+      self.votes.remove(&vote_id);
+      self.game_to_vote.remove(&game.id);
+    }
+
     self.code_to_game.remove(&game.join_code);
     self.games.remove(&game.id);
     self.game_to_sessions.remove(&game.id);

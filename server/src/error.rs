@@ -29,10 +29,12 @@ pub enum SocketError {
   ServerError,
   AuthError,
   GameNotFound,
+  ClientOnlyAction,
   HostOnlyAction,
   ActionStateMismatch,
   ValidationError(ErrorMessage),
   AlreadyJoinedGame,
+  VoteNotFound,
 }
 
 impl ToDisplayText for SocketError {
@@ -47,6 +49,7 @@ impl ToDisplayText for SocketError {
       }
       SocketError::AuthError => "Authentication error".to_string(),
       SocketError::GameNotFound => "Game not found".to_string(),
+      SocketError::ClientOnlyAction => "Action can only be performed by a client".to_string(),
       SocketError::HostOnlyAction => "Action can only be performed by the host".to_string(),
       SocketError::ActionStateMismatch => {
         "Action cannot be performed during the current game state".to_string()
@@ -55,6 +58,7 @@ impl ToDisplayText for SocketError {
         format!("Validation error: {}", error_message.message)
       }
       SocketError::AlreadyJoinedGame => "User has already joined a game".to_string(),
+      SocketError::VoteNotFound => "Vote not found".to_string(),
     }
   }
 }

@@ -16,6 +16,7 @@ use crate::{
   systems::{
     game::{GameHostAction, GameStartAction},
     user::{UserCheckGameAction, UserInitializeAction, UserJoinAction},
+    vote::{VoteCastAction, VoteEndAction, VoteStartAction},
   },
 };
 
@@ -267,6 +268,33 @@ impl SocketManager {
 
     if msg.action == "game/start" {
       return GameStartAction::on_receive(GameStartAction {}, self, game, user).await;
+    } else if msg.action == "vote/start" {
+      return VoteStartAction::on_receive(
+        serde_json::from_value(msg.payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
+        self,
+        game,
+        user,
+      )
+      .await;
+    } else if msg.action == "vote/cast" {
+      return VoteCastAction::on_receive(
+        serde_json::from_value(msg.payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
+        self,
+        game,
+        user,
+      )
+      .await;
+    } else if msg.action == "vote/end" {
+      return VoteEndAction::on_receive(
+        serde_json::from_value(msg.payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
+        self,
+        game,
+        user,
+      )
+      .await;
     }
 
     return GameManager::on_action(self, game, user, &msg.action, msg.payload).await;
