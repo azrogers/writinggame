@@ -1,24 +1,24 @@
 {
-	"topics": [
-		{
-			"id": "horror",
-			"name": "Horror Novel"
-		},
-		{
-			"id": "fantasy",
-			"name": "Fantasy"
-		},
-		{
-			"id": "linkedin",
-			"name": "LinkedIn Post"
-		},
-		{
-			"id": "advert",
-			"name": "Advertisement"
-		},
-		{
-			"id": "thinkpiece",
-			"name": "Thinkpiece"
-		}
-	]
+  "topics": [
+    {
+      "id": "linkedin",
+      "name": "LinkedIn Post",
+      "layout": "title"
+    },
+    {
+      "id": "advert",
+      "name": "Advertisement",
+      "layout": "paragraph"
+    },
+    {
+      "id": "thinkpiece",
+      "name": "Thinkpiece",
+      "layout": "title"
+    },
+    {
+      "id": "rap",
+      "name": "Rap Verse",
+      "layout": "verse"
+    }
+  ]
 }

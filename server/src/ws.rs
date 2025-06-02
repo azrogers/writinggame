@@ -1,4 +1,4 @@
-use log::{error, info, warn};
+use log::{debug, error, info, warn};
 
 use futures_util::{SinkExt, StreamExt, TryFutureExt};
 use serde::{Deserialize, Serialize};
@@ -10,11 +10,12 @@ use warp::filters::ws::{Message, WebSocket};
 use crate::{
   app_config::AppConfig,
   database::Database,
-  error::SocketError,
+  error::{SocketError, ToDisplayText},
+  games::GameManager,
   models::{game::Game, user::User},
   systems::{
-    game::GameHostAction,
-    user::{UserInitializeAction, UserJoinAction},
+    game::{GameHostAction, GameStartAction},
+    user::{UserCheckGameAction, UserInitializeAction, UserJoinAction},
   },
 };
 
@@ -27,23 +28,27 @@ struct SocketMessage {
   payload: serde_json::Value,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 struct SocketErrorResponse {
   status: String,
   error: SocketError,
+  display_text: String,
 }
 
 impl SocketErrorResponse {
   pub fn message(error: SocketError) -> Message {
     let response = Self {
       status: "error".to_string(),
+      display_text: error.to_display_text(),
       error,
     };
+
+    debug!("sending message {response:?}");
     Message::text(serde_json::to_string(&response).unwrap())
   }
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 struct SocketSuccessResponse {
   action: String,
   status: String,
@@ -58,6 +63,7 @@ impl SocketSuccessResponse {
       payload: serde_json::to_value(payload).unwrap(),
     };
 
+    debug!("sending message {response:?}");
     Message::text(serde_json::to_string(&response).unwrap())
   }
 }
@@ -99,7 +105,7 @@ impl SocketManager {
       }
     });
 
-    let session_id = Uuid::default();
+    let session_id = Uuid::new_v4();
     info!("user connected: {session_id}");
 
     self.database.session_add(session_id, tx.clone()).await;
@@ -143,17 +149,20 @@ impl SocketManager {
       str
     } else {
       return Err(SocketError::Parse(
-        "message contents could not be obtained".to_string(),
+        "message contents could not be obtained".to_string().into(),
       ));
     };
 
+    debug!("message received: {msg}");
+
     let msg = serde_json::from_str::<SocketMessage>(msg)
-      .map_err(|err| SocketError::Parse(err.to_string()))?;
+      .map_err(|err| SocketError::Parse(err.to_string().into()))?;
 
     // user/initialize - creates a new user and token
     if msg.action == "user/initialize" {
       return UserInitializeAction::on_receive(
-        serde_json::from_value(msg.payload).map_err(|err| SocketError::Parse(err.to_string()))?,
+        serde_json::from_value(msg.payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
         self,
         session_id,
       )
@@ -162,9 +171,19 @@ impl SocketManager {
     // game/host - creates a new game and host user
     else if msg.action == "game/host" {
       return GameHostAction::on_receive(
-        serde_json::from_value(msg.payload).map_err(|err| SocketError::Parse(err.to_string()))?,
+        serde_json::from_value(msg.payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
         self,
         session_id,
+      )
+      .await;
+    }
+    // user/check_game - tries to find a game from a join code
+    else if msg.action == "user/check_game" {
+      return UserCheckGameAction::on_receive(
+        serde_json::from_value(msg.payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
+        self,
       )
       .await;
     }
@@ -175,22 +194,82 @@ impl SocketManager {
     }
 
     let token_contents = User::verify_token(&self.config, &msg.token.unwrap())?;
-    let users = self.database.users.read().await;
-    let user = users.get(&token_contents.user_id).ok_or_else(|| {
-      warn!("token with no user: {token_contents:?}");
-      SocketError::AuthError
-    })?;
 
+    let user = self
+      .database
+      .users
+      .get(&token_contents.user_id)
+      .ok_or_else(|| {
+        warn!("token with no user: {token_contents:?}");
+        SocketError::AuthError
+      })?
+      .clone();
+
+    let user_session_id = user.read().await.session_id;
+    // handle swapping to a new session
+    if user_session_id != session_id {
+      let mut new_game_id: Option<Uuid> = None;
+      if let Some(old_session) = self.database.sessions.get(&user_session_id) {
+        if let Some(game_id) = old_session.game_id {
+          if let Some(mut sessions) = self.database.game_to_sessions.get_mut(&game_id) {
+            sessions.insert(session_id);
+          }
+
+          new_game_id = Some(game_id);
+        }
+      }
+
+      let user_id = user.read().await.id;
+      if let Some(mut session) = self.database.sessions.get_mut(&session_id) {
+        session.game_id = new_game_id;
+        session.user_id = Some(user_id);
+      }
+
+      self.database.user_to_session.insert(user_id, session_id);
+      let mut user_mut = user.write().await;
+      user_mut.session_id = session_id;
+    }
+
+    // user/join - join a game using a join code
     if msg.action == "user/join" {
       return UserJoinAction::on_receive(
-        serde_json::from_value(msg.payload).map_err(|err| SocketError::Parse(err.to_string()))?,
+        serde_json::from_value(msg.payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
         self,
+        session_id,
         user,
       )
       .await;
     }
 
-    Err(SocketError::InvalidAction)
+    let game_id = self
+      .database
+      .sessions
+      .get(&session_id)
+      .and_then(|s| s.game_id)
+      .ok_or_else(|| {
+        warn!(
+          "session {session_id} tried to use action {} but no game_id found",
+          msg.action
+        );
+        SocketError::GameNotFound
+      })?;
+
+    let game = self
+      .database
+      .games
+      .get(&game_id)
+      .ok_or_else(|| {
+        warn!("user has game_id in session listed as {game_id} but no game found");
+        SocketError::ServerError
+      })?
+      .clone();
+
+    if msg.action == "game/start" {
+      return GameStartAction::on_receive(GameStartAction {}, self, game, user).await;
+    }
+
+    return GameManager::on_action(self, game, user, &msg.action, msg.payload).await;
   }
 
   pub async fn broadcast_to_game(&self, game: &Game, action: String, msg: serde_json::Value) {
@@ -199,20 +278,28 @@ impl SocketManager {
       payload: msg,
     };
     let response = Message::text(serde_json::to_string(&message).unwrap());
-    let session_ids = self.database.user_to_session.read().await;
-    let sessions = self.database.sessions.read().await;
-    for user_id in &game.users {
-      if let Some(session_id) = session_ids.get(user_id) {
-        if let Some(session) = sessions.get(session_id) {
+    if let Some(session_ids) = self.database.game_to_sessions.get(&game.id) {
+      for session_id in session_ids.iter() {
+        if let Some(session) = self.database.sessions.get(session_id) {
           session.tx.send(response.clone()).unwrap_or_else(|e| {
             error!("websocket send error: {e}");
           });
         } else {
-          warn!("Found session_id {session_id} for user {user_id} but no session found?");
+          warn!("Found session_id {session_id} but no session found?");
         }
-      } else {
-        info!("Attempted to broadcast to game but no session found for user_id {user_id}");
       }
+    }
+  }
+
+  pub async fn send_to_user(&self, user_id: Uuid, action: String, msg: serde_json::Value) {
+    let message = SocketStateMessage {
+      action,
+      payload: msg,
+    };
+    let response = Message::text(serde_json::to_string(&message).unwrap());
+    if let Some(session_id) = self.database.user_to_session.get(&user_id) {
+    } else {
+      warn!("Tried to send message to user {user_id} but no session found");
     }
   }
 }

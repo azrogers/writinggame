@@ -1,0 +1,5 @@
+{
+	"token_secret": "test_secret",
+	"token_duration": 86400,
+	"port": 3030
+}

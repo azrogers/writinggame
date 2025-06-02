@@ -5,9 +5,12 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.98"
+as-any = "0.3.2"
 chrono = { version = "0.4.41", features = ["serde"] }
 config = "0.15.11"
+dashmap = "6.1.0"
 erased-serde = "0.4.6"
+futures = "0.3.31"
 futures-util = "0.3.31"
 hmac = "0.12.1"
 itertools = "0.14.0"
@@ -20,5 +23,5 @@ serde_json = "1.0.140"
 sha2 = "0.10.9"
 tokio = { version = "1", features = ["full"] }
 tokio-stream = "0.1.17"
-uuid = { version = "1.16.0", features = ["serde"] }
+uuid = { version = "1.16.0", features = ["serde", "v4"] }
 warp = "0.3"

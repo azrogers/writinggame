@@ -4,6 +4,7 @@ use config::Config;
 pub struct AppConfig {
   pub token_secret: String,
   pub token_duration: i64,
+  pub port: u16,
 }
 
 impl AppConfig {
@@ -15,9 +16,11 @@ impl AppConfig {
 
     let token_secret = settings.get_string("token_secret")?;
     let token_duration = settings.get_int("token_duration")?;
+    let port = settings.get_int("port")?;
     Ok(AppConfig {
       token_secret,
       token_duration,
+      port: port as u16,
     })
   }
 }

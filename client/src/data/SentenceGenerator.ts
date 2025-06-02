@@ -1,19 +1,17 @@
-import { LogFactory, type Logger } from "./logger";
+import { LogFactory, type Logger } from "../lib/logger";
 
 const logger: Logger = LogFactory.create("SentenceGenerator");
 
-export interface TopicSentences {
+export interface SentenceTemplates {
   dictionaries: { [name: string]: string[] };
   templates: string[];
 }
-
-export type Sentences = { [topic: string]: TopicSentences };
 
 export class SentenceGenerator {
   private _dictionaries: { [name: string]: string[] };
   private _templates: string[];
 
-  constructor(sentences: TopicSentences) {
+  constructor(sentences: SentenceTemplates) {
     this._dictionaries = sentences.dictionaries;
     this._templates = sentences.templates;
   }
@@ -57,6 +55,25 @@ export class SentenceGenerator {
             Math.random() * (range[1] - range[0]) + range[0]
           );
           return parts[0].replace(/X+/, randNum.toString());
+        } else if (p1.startsWith("^")) {
+          const parts = p1.substring(1).split(",");
+          return this.selectRandom(parts);
+        } else if (p1.indexOf(",") != -1) {
+          const parts = p1.split(",");
+          const totalLen = parts
+            .map((p) => this._dictionaries[p].length)
+            .reduce((partialSum, a) => partialSum + a, 0);
+          let index = Math.floor(Math.random() * totalLen);
+          for (let i = 0; i < parts.length; i++) {
+            const dictionary = this._dictionaries[i];
+            if (index >= dictionary.length) {
+              index -= dictionary.length;
+            } else {
+              return this.evaluate(dictionary[index]);
+            }
+          }
+
+          logger.error(`failed to find item for ${p1} - this shouldn't happen`);
         } else if (this._dictionaries[p1]) {
           return this.evaluate(this.selectRandom(this._dictionaries[p1]));
         }

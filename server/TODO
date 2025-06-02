@@ -1,0 +1,10 @@
+Tasks:
+	✔ handle users rejoining under new sessions @done(25-06-02 01:55)
+		- update session state with new session id
+	☐ handle users leaving during lobby
+	☐ handle users with duplicate names
+	☐ tests
+
+possible bugs:
+	☐ find some way to deal with "zombie" games (not completed, all users left)
+		☐ destroy game when host leaves

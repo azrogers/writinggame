@@ -1,62 +1,187 @@
 {
-	"linkedin": {
-		"dictionaries": {
-			"industry": [
-				"cryptocurrency",
-				"AI",
-				"DevOps",
-				"finance",
-				"Big Data",
-				"superconductors",
-				"quantum computers",
-				"social media"
-			],
-			"topic": [
-				"productivity",
-				"focus",
-				"growth hacking",
-				"stealth startup",
-				"company culture",
-				"social media reach",
-				"B2B sales"
-			],
-			"hack": [
-				"mindfulness",
-				"this mindset",
-				"AI",
-				"time blocking",
-				"inbox zero",
-				"a digital detox",
-				"effective habits"
-			],
-			"position": [
-				"CEO",
-				"CTO",
-				"CFO",
-				"Head of Engineering",
-				"department manager",
-				"social media guru",
-				"Vice President of Sales"
-			],
-			"event": [
-				"acquisition",
-				"divorce",
-				"bankruptcy",
-				"getting fired",
-				"losing ${#X0|15-50}M",
-				"my promotion"
-			]
-		},
-		"templates": [
-			"Here's my predictions for {industry} in {.year}.",
-			"Big things are happening in {industry}.",
-			"I invested in the latest {industry} startup.",
-			"How I transformed my {topic} using {hack}:",
-			"If you're not leveraging {hack}, you're falling behind.",
-			"This one hack was a force multiplier for my {industry} startup.",
-			"We went through over {#X00|1-10} candidates for our next {position} - until we learned this.",
-			"I learned this from my {position} - and it changed my life.",
-			"What {event} taught me about {topic}:"
-		]
-	}
+  "linkedin": {
+    "dictionaries": {
+      "industry": [
+        "cryptocurrency",
+        "AI",
+        "DevOps",
+        "finance",
+        "Big Data",
+        "superconductors",
+        "quantum computers",
+        "social media"
+      ],
+      "topic": [
+        "productivity",
+        "focus",
+        "growth hacking",
+        "stealth startup",
+        "company culture",
+        "social media reach",
+        "B2B sales"
+      ],
+      "hack": [
+        "mindfulness",
+        "this mindset",
+        "AI",
+        "time blocking",
+        "inbox zero",
+        "a digital detox",
+        "effective habits"
+      ],
+      "position": [
+        "CEO",
+        "CTO",
+        "CFO",
+        "Head of Engineering",
+        "department manager",
+        "social media guru",
+        "Vice President of Sales"
+      ],
+      "event": [
+        "acquisition",
+        "divorce",
+        "bankruptcy",
+        "getting fired",
+        "losing ${#X0|15-50}M",
+        "my promotion"
+      ]
+    },
+    "templates": [
+      "Here's my predictions for {industry} in {.year}.",
+      "Big things are happening in {industry}.",
+      "I invested in the latest {industry} startup.",
+      "How I transformed my {topic} using {hack}:",
+      "If you're not leveraging {hack}, you're falling behind.",
+      "This one hack was a force multiplier for my {industry} startup.",
+      "We went through over {#X00|1-10} candidates for our next {position} - until we learned this.",
+      "I learned this from my {position} - and it changed my life.",
+      "What {event} taught me about {topic}:"
+    ]
+  },
+  "advert": {
+    "dictionaries": {
+      "bad": [
+        "the sorry state of",
+        "the constant stream of bad",
+        "hysterical",
+        "lackluster",
+        "low quality",
+        "depressing"
+      ],
+      "industries": [
+        "news",
+        "prescriptions",
+        "financial advice",
+        "online banking",
+        "shopping",
+        "sports betting",
+        "beer",
+        "beverages",
+        "software solutions"
+      ],
+      "good": [
+        "beautiful",
+        "well-made",
+        "bespoke",
+        "custom",
+        "homemade",
+        "organic",
+        "GMO-free"
+      ]
+    },
+    "templates": [
+      "Are you tired of {bad} {industries}?",
+      "Get ready for the next big thing in {industries}.",
+      "Looking for {good} {industries}?",
+      "You've tried the other {industries} - now try ours.",
+      "You haven't seen anything like this before."
+    ]
+  },
+  "thinkpiece": {
+    "dictionaries": {
+      "behaviors": [
+        "social media",
+        "homeschooling",
+        "gentle parenting",
+        "pornography",
+        "wokeness"
+      ],
+      "history": [
+        "the Iraq War",
+        "9/11",
+        "the Syrian Civil War",
+        "the Cold War",
+        "the Reformation",
+        "COVID"
+      ],
+      "politics": ["the far-left", "Donald Trump", "the alt-right", "DEI"],
+      "area": [
+        "our lives",
+        "journalism",
+        "online culture",
+        "dinner parties",
+        "education"
+      ]
+    },
+    "templates": [
+      "Why I ditched {behaviors}",
+      "What did we learn from {history}?",
+      "How {politics} is ruining {area}",
+      "What {politics} did to {behaviors,area}",
+      "How {history} changed {behaviors,area}"
+    ]
+  },
+  "rap": {
+    "dictionaries": {
+      "location": [
+        "club",
+        "house",
+        "party",
+        "joint",
+        "ghetto",
+        "block",
+        "street"
+      ],
+      "animal": [
+        "lion",
+        "wolf",
+        "Godzilla",
+        "King Kong",
+        "elephant",
+        "alligator"
+      ],
+      "machine": ["bulldozer", "steamroller", "tank", "dumptruck"],
+      "person_own": [
+        "your mom",
+        "your girl",
+        "your dad",
+        "your sister",
+        "your boss",
+        "your wife",
+        "your cousin"
+      ],
+      "good": [
+        "hot",
+        "sick",
+        "fire",
+        "blazing",
+        "slick",
+        "strong",
+        "dope",
+        "lit"
+      ],
+      "title": ["MC", "rapper", "rap god", "king", "demigod", "superior"]
+    },
+    "templates": [
+      "You know what they say - that's an awfully hot coffee pot.",
+      "My {^rhymes,verse,lyrics} so {good} I bring down this {location}.",
+      "I'm tearing up these streets like a{^, motherfucking} {machine,animal}.",
+      "Way I {^rhyme,flow,vibe} I'm like a {machine,animal}.",
+      "Gotta tell you now, I {^fucked,banged,did,sucked off,ate out} {person_own}.",
+      "Get ready for this shit, it's a real {location,good} {^beat,rap,flow}.",
+      "Talked to {person_own} - they called me the #1 {title}.",
+      "{^Where I'm from I'm known as,Don't step to me I'm the,You better recognize I'm the} the ultimate {title}."
+    ]
+  }
 }

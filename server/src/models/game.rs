@@ -1,5 +1,3 @@
-use std::any::Any;
-
 use chrono::{DateTime, Utc};
 use rand::RngCore;
 use serde::{Deserialize, Serialize};
@@ -7,7 +5,7 @@ use uuid::Uuid;
 
 use crate::{database::Database, error::SocketError};
 
-use super::{EmptyState, ImplState};
+use super::{EmptyState, ImplStateContainer};
 
 const ALPHABET: [char; 26] = [
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
@@ -37,9 +35,10 @@ pub struct Game {
   pub game_mode: GameMode,
   pub game_state: GameState,
   pub join_code: String,
+  pub host_user_id: Uuid,
   pub users: Vec<Uuid>,
   pub created: DateTime<Utc>,
-  pub impl_state: Box<dyn ImplState>,
+  pub impl_state: ImplStateContainer,
 }
 
 impl Game {
@@ -47,19 +46,21 @@ impl Game {
     database: &Database,
     game_type: GameType,
     game_mode: GameMode,
+    host_user_id: Uuid,
   ) -> Result<Game, SocketError> {
-    let id = Uuid::default();
+    let id = Uuid::new_v4();
     let code = Self::generate_and_insert_unique_code(database, id).await?;
 
     Ok(Game {
       id,
+      host_user_id,
       game_type,
       game_mode,
       game_state: GameState::Lobby,
       join_code: code,
       users: Vec::default(),
       created: chrono::offset::Utc::now(),
-      impl_state: Box::new(EmptyState {}),
+      impl_state: ImplStateContainer::new(EmptyState {}),
     })
   }
 
@@ -69,9 +70,8 @@ impl Game {
   ) -> Result<String, SocketError> {
     loop {
       let code = Self::generate_code();
-      let mut codes = database.code_to_game.write().await;
-      if !codes.contains_key(&code) {
-        codes.insert(code.clone(), game_id);
+      if !database.code_to_game.contains_key(&code) {
+        database.code_to_game.insert(code.clone(), game_id);
         return Ok(code);
       }
     }

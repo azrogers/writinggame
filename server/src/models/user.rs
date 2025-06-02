@@ -10,10 +10,9 @@ use uuid::Uuid;
 
 use crate::{app_config::AppConfig, error::SocketError};
 
-use super::{EmptyState, ImplState};
+use super::{EmptyState, ImplState, ImplStateContainer};
 
-#[derive(Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(tag = "type")]
+#[derive(Serialize, Deserialize, Copy, Clone, Debug, PartialEq)]
 pub enum UserType {
   Client,
   Host,
@@ -25,7 +24,7 @@ pub struct User {
   pub name: Option<String>,
   pub created: DateTime<Utc>,
   pub user_type: UserType,
-  pub impl_state: Box<dyn ImplState>,
+  pub impl_state: ImplStateContainer,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -39,12 +38,12 @@ pub struct JwtTokenContents {
 impl User {
   pub fn new(session_id: Uuid, name: Option<String>, user_type: UserType) -> Self {
     Self {
-      id: Uuid::default(),
+      id: Uuid::new_v4(),
       session_id,
       name,
       created: chrono::offset::Utc::now(),
       user_type,
-      impl_state: Box::new(EmptyState {}),
+      impl_state: ImplStateContainer::new(EmptyState {}),
     }
   }
 
@@ -59,7 +58,7 @@ impl User {
       SocketError::AuthError
     })?;
 
-    if contents.expires > chrono::offset::Utc::now() {
+    if contents.expires < chrono::offset::Utc::now() {
       warn!("Attempted to authenticate with expired token");
       return Err(SocketError::AuthError);
     }

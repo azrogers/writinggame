@@ -16,7 +16,7 @@ mod models;
 mod systems;
 mod ws;
 
-fn ws_handler(ws: warp::ws::Ws, _: String, socket_manager: SocketManager) -> impl Reply {
+fn ws_handler(ws: warp::ws::Ws, socket_manager: SocketManager) -> impl Reply {
   ws.on_upgrade(move |socket| SocketManager::user_connected(socket_manager, socket))
 }
 
@@ -66,14 +66,15 @@ async fn main() {
   let config = AppConfig::new().unwrap();
   let socket_manager = ws::SocketManager::new(config.clone());
 
-  let hello = warp::path!("hello" / String).map(|name| format!("Hello, {}!", name));
+  let hello = warp::path!("hello" / String).map(|name| format!("Hello, {name}!"));
 
   let ws_route = warp::path("ws")
     .and(warp::ws())
-    .and(warp::path::param())
     .and(warp::any().map(move || socket_manager.clone()))
     .map(ws_handler)
     .recover(rejection_handler);
 
-  warp::serve(ws_route).run(([127, 0, 0, 1], 3030)).await;
+  warp::serve(ws_route)
+    .run(([127, 0, 0, 1], config.port))
+    .await;
 }
