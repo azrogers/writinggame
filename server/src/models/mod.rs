@@ -27,14 +27,14 @@ impl ImplStateContainer {
   where
     T: 'static,
   {
-    self.state.downcast_ref()
+    (*self.state).downcast_ref()
   }
 
   pub fn downcast_mut<T>(&mut self) -> Option<&mut T>
   where
     T: 'static,
   {
-    self.state.downcast_mut()
+    (*self.state).downcast_mut()
   }
 }
 

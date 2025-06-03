@@ -65,7 +65,7 @@ export class SentenceGenerator {
             .reduce((partialSum, a) => partialSum + a, 0);
           let index = Math.floor(Math.random() * totalLen);
           for (let i = 0; i < parts.length; i++) {
-            const dictionary = this._dictionaries[i];
+            const dictionary = this._dictionaries[parts[i]];
             if (index >= dictionary.length) {
               index -= dictionary.length;
             } else {

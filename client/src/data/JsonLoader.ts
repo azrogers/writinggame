@@ -1,6 +1,6 @@
 export class JsonLoader {
-  private static _jsonData: { [path: string]: any };
-  private static _loaders: { [path: string]: Promise<any> };
+  private static _jsonData: { [path: string]: any } = {};
+  private static _loaders: { [path: string]: Promise<any> } = {};
 
   static preload(path: string) {
     this._loaders[path] = fetch("/data/" + path)

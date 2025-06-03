@@ -38,8 +38,7 @@ impl LeaderStartGameAction {
 
     let user = user.read().await;
     let user_impl_state = user.impl_state.downcast_ref::<WriteUserImplState>();
-    if user_impl_state.is_none() || user_impl_state.unwrap().user_type != WriteGameUserType::Leader
-    {
+    if user_impl_state.unwrap().user_type != WriteGameUserType::Leader {
       return Err(SocketError::ValidationError(
         "User type 'Leader' required to perform this action"
           .to_string()
@@ -50,7 +49,7 @@ impl LeaderStartGameAction {
     socket_manager
       .send_to_user(
         game.host_user_id,
-        "game/leader_start_game".to_owned(),
+        "wg/leader_start_game".to_owned(),
         serde_json::Value::Null,
       )
       .await;
@@ -119,11 +118,14 @@ impl InitialSentenceAction {
       author: None,
       text: self.sentence,
     });
-
-    let state_update = impl_state.to_public_state();
+		impl_state.round_state = RoundState::Writing;
 
     socket_manager
-      .broadcast_to_game(&game, "wg/sentences_update".to_string(), state_update)
+      .broadcast_to_game(
+        &game,
+        "game/state".to_string(),
+        serde_json::to_value(game.to_state_update()).unwrap(),
+      )
       .await;
 
     Ok(Some((

@@ -32,6 +32,7 @@ enum VoteStartOption {
 #[derive(Deserialize)]
 pub struct VoteStartAction {
   vote_type: VoteType,
+  title: String,
   options: Vec<VoteStartOption>,
 }
 
@@ -55,7 +56,7 @@ impl VoteStartAction {
       ));
     }
 
-    let mut builder = VoteBuilder::new(self.vote_type);
+    let mut builder = VoteBuilder::new(self.vote_type, self.title);
     for option in self.options {
       match option {
         VoteStartOption::Text(text) => {
@@ -65,9 +66,16 @@ impl VoteStartAction {
     }
 
     let vote = builder.build(game.id);
+    let response = vote.to_client_response();
 
     socket_manager
-      .broadcast_to_game(&game, "vote/start".to_string(), vote.to_client_response())
+      .database
+      .game_to_vote
+      .insert(game.id, vote.id);
+    socket_manager.database.votes.insert(vote.id, vote);
+
+    socket_manager
+      .broadcast_to_game(&game, "vote/start".to_string(), response)
       .await;
 
     Ok(None)

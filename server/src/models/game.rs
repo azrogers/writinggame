@@ -22,11 +22,17 @@ pub enum GameMode {
   Normal,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Copy)]
 pub enum GameState {
   Lobby,
   Playing,
   Concluded,
+}
+
+#[derive(Serialize)]
+pub struct GameStateResponse {
+  pub game_state: GameState,
+  pub impl_state: serde_json::Value,
 }
 
 pub struct Game {
@@ -86,5 +92,12 @@ impl Game {
       s.push(ALPHABET[num as usize]);
     }
     s
+  }
+
+  pub fn to_state_update(&self) -> GameStateResponse {
+    GameStateResponse {
+      game_state: self.game_state,
+      impl_state: self.impl_state.to_public_state(),
+    }
   }
 }

@@ -1,6 +1,6 @@
 use std::{any::Any, sync::Arc};
 
-use actions::InitialSentenceAction;
+use actions::{InitialSentenceAction, LeaderStartGameAction};
 use log::warn;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -105,6 +105,15 @@ impl WriteGameImpl {
   ) -> Result<MessageResponse, crate::error::SocketError> {
     if action == "wg/initial_sentence" {
       return InitialSentenceAction::on_receive(
+        serde_json::from_value(payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
+        socket_manager,
+        game,
+        user,
+      )
+      .await;
+    } else if action == "wg/leader_start_game" {
+      return LeaderStartGameAction::on_receive(
         serde_json::from_value(payload)
           .map_err(|err| SocketError::Parse(err.to_string().into()))?,
         socket_manager,

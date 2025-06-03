@@ -113,7 +113,7 @@ export function initGameHandlers() {
   );
 
   MessageDispatcher.registerHandler<GameStateResponse>(
-    "game/start",
+    "game/state",
     (payload) => {
       Store.set(gameImplState, payload.impl_state);
       if (payload.game_state == "Lobby") {
@@ -135,8 +135,8 @@ export function initGameHandlers() {
 }
 
 export function initGameHandlersWithSend(sendJsonMessage: SendJsonMessage) {
-  MessageDispatcher.registerHandler<null>("game/leader_start_game", () => {
-    MessageDispatcher.sendMessage(sendJsonMessage, "game/start", {});
+  MessageDispatcher.registerHandler<null>("wg/leader_start_game", () => {
+    MessageDispatcher.sendMessage(sendJsonMessage, "game/start", null);
   });
 }
 
@@ -156,5 +156,5 @@ export function hostGame(sendJsonMessage: SendJsonMessage) {
 }
 
 export function startGameLeader(sendJsonMessage: SendJsonMessage) {
-  MessageDispatcher.sendMessage(sendJsonMessage, "game/leader_start_game", {});
+  MessageDispatcher.sendMessage(sendJsonMessage, "wg/leader_start_game", null);
 }

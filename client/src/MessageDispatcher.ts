@@ -77,7 +77,7 @@ export class MessageDispatcher {
   static sendMessage(
     sendJsonMessage: SendJsonMessage,
     action: string,
-    payload: object
+    payload: object | null
   ) {
     let token = getToken();
     if (!token) {

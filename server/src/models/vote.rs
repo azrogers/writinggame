@@ -44,6 +44,7 @@ pub enum VoteType {
 
 pub struct Vote {
   pub id: Uuid,
+  pub title: String,
   pub game_id: Uuid,
   pub vote_type: VoteType,
   pub options: Vec<VoteOption>,
@@ -59,6 +60,7 @@ impl Vote {
 
     json!({
       "id": self.id,
+      "title": self.title,
       "vote_type": self.vote_type,
       "options": options
     })
@@ -67,13 +69,15 @@ impl Vote {
 
 pub struct VoteBuilder {
   vote_type: VoteType,
+  title: String,
   options: Vec<VoteOption>,
 }
 
 impl VoteBuilder {
-  pub fn new(vote_type: VoteType) -> Self {
+  pub fn new(vote_type: VoteType, title: String) -> Self {
     Self {
       vote_type,
+      title,
       options: Vec::new(),
     }
   }
@@ -90,6 +94,7 @@ impl VoteBuilder {
     Vote {
       id: Uuid::new_v4(),
       game_id,
+      title: self.title,
       vote_type: self.vote_type,
       options: self.options,
       user_votes: DashMap::new(),

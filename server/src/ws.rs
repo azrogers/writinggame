@@ -326,6 +326,13 @@ impl SocketManager {
     };
     let response = Message::text(serde_json::to_string(&message).unwrap());
     if let Some(session_id) = self.database.user_to_session.get(&user_id) {
+      if let Some(session) = self.database.sessions.get(&session_id) {
+        session.tx.send(response.clone()).unwrap_or_else(|e| {
+          error!("websocket send error: {e}");
+        });
+      } else {
+        warn!("Found session_id {} but no session found?", *session_id);
+      }
     } else {
       warn!("Tried to send message to user {user_id} but no session found");
     }

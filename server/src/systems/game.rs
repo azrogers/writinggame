@@ -65,6 +65,8 @@ impl GameHostAction {
     // we add session to game_to_sessions but NOT the host user to game.users
     let mut sessions = HashSet::new();
     sessions.insert(session_id);
+    let user_id = user.id;
+    socket_manager.database.user_add(session_id, user).await;
     socket_manager
       .database
       .game_to_sessions
@@ -74,7 +76,7 @@ impl GameHostAction {
       "game/host".to_string(),
       Box::new(GameHostResponse {
         game_id: id,
-        user_id: user.id,
+        user_id,
         token,
         join_code,
         impl_state: public_state,
@@ -87,12 +89,6 @@ impl GameHostAction {
 
 #[derive(Deserialize)]
 pub struct GameStartAction;
-
-#[derive(Serialize)]
-pub struct GameStateResponse {
-  game_state: GameState,
-  impl_state: serde_json::Value,
-}
 
 impl GameStartAction {
   pub async fn on_receive(
@@ -115,11 +111,7 @@ impl GameStartAction {
       .broadcast_to_game(
         &game,
         "game/state".to_owned(),
-        serde_json::to_value(GameStateResponse {
-          game_state: game.game_state.clone(),
-          impl_state: game.impl_state.to_public_state(),
-        })
-        .unwrap(),
+        serde_json::to_value(game.to_state_update()).unwrap(),
       )
       .await;
 

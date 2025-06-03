@@ -15,6 +15,8 @@ import { initUserHandlers } from "./state/UserState";
 import { useAtom } from "jotai";
 import { initGameHandlers, initGameHandlersWithSend } from "./state/GameState";
 import LobbyPage from "./games/LobbyPage";
+import { initVoteHandlers } from "./state/VoteState";
+import GamePage from "./games/GamePage";
 
 const SOCKET_URL: string = "ws://localhost:3030/ws";
 
@@ -23,8 +25,11 @@ function App() {
   const [_connectionState, setConnectionState] = useAtom(connectionState);
   const [_globalGameState] = useAtom(globalGameState);
 
-  initUserHandlers();
-  initGameHandlers();
+  useEffect(() => {
+    initUserHandlers();
+    initGameHandlers();
+    initVoteHandlers();
+  }, []);
 
   useEffect(() => {
     if (
@@ -63,6 +68,8 @@ function App() {
     page = <JoinPage sendJsonMessage={sendJsonMessage} />;
   } else if (_globalGameState == GlobalGameState.Lobby) {
     page = <LobbyPage sendJsonMessage={sendJsonMessage} />;
+  } else if (_globalGameState == GlobalGameState.Game) {
+    page = <GamePage sendJsonMessage={sendJsonMessage} />;
   }
 
   return (

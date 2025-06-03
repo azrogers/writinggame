@@ -18,11 +18,9 @@ const AtomsDevtools = (props: AtomsDevtoolsProps) => {
 };
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <Provider store={Store}>
-      <AtomsDevtools>
-        <App />
-      </AtomsDevtools>
-    </Provider>
-  </StrictMode>
+  <Provider store={Store}>
+    <AtomsDevtools>
+      <App />
+    </AtomsDevtools>
+  </Provider>
 );
