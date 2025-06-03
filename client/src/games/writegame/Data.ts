@@ -7,6 +7,7 @@ const TOPICS_FILE = "writers/topics.json";
 export interface Topic {
   id: string;
   name: string;
+  layout: "paragraph" | "title" | "verse";
 }
 
 export interface Topics {

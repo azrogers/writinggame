@@ -174,7 +174,7 @@
       "title": ["MC", "rapper", "rap god", "king", "demigod", "superior"]
     },
     "templates": [
-      "You know what they say - that's an awfully hot coffee pot.",
+      "{%0.1}You know what they say - that's an awfully hot coffee pot.",
       "My {^rhymes,verse,lyrics} so {good} I bring down this {location}.",
       "I'm tearing up these streets like a{^, motherfucking} {machine,animal}.",
       "Way I {^rhyme,flow,vibe} I'm like a {machine,animal}.",

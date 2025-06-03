@@ -1,5 +1,4 @@
 import { toast, ToastContainer } from "react-toastify";
-import "./App.css";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 
 import {
@@ -17,6 +16,8 @@ import { initGameHandlers, initGameHandlersWithSend } from "./state/GameState";
 import LobbyPage from "./games/LobbyPage";
 import { initVoteHandlers } from "./state/VoteState";
 import GamePage from "./games/GamePage";
+import { developerModeEnabled } from "./dev/DeveloperMode";
+import DeveloperPage from "./dev/DeveloperPage";
 
 const SOCKET_URL: string = "ws://localhost:3030/ws";
 
@@ -24,6 +25,7 @@ function App() {
   const { lastMessage, readyState, sendJsonMessage } = useWebSocket(SOCKET_URL);
   const [_connectionState, setConnectionState] = useAtom(connectionState);
   const [_globalGameState] = useAtom(globalGameState);
+  const [_developerMode] = useAtom(developerModeEnabled);
 
   useEffect(() => {
     initUserHandlers();
@@ -62,6 +64,10 @@ function App() {
   useEffect(() => {
     initGameHandlersWithSend(sendJsonMessage);
   }, [sendJsonMessage]);
+
+  if (_developerMode) {
+    return <DeveloperPage />;
+  }
 
   let page = <></>;
   if (_globalGameState == GlobalGameState.Join) {

@@ -11,8 +11,10 @@ import {
 } from "../state/GameState";
 import { useAtom } from "jotai";
 import { Store } from "../state/Store";
+import { developerModeEnabled } from "../dev/DeveloperMode";
 
 const JOIN_CODE_LEN = 5;
+const DEVELOPER_MODE_TOGGLE = "$DEV$";
 
 interface JoinPageProps {
   sendJsonMessage: SendJsonMessage;
@@ -43,6 +45,11 @@ const JoinPage = (props: JoinPageProps): React.ReactElement => {
         initialValues={{ joinCode: "", name: "" }}
         validate={(values) => {
           const errors: { [name: string]: string | undefined } = {};
+          if (values.joinCode == DEVELOPER_MODE_TOGGLE) {
+            // No validation if join code is developer toggle
+            return errors;
+          }
+
           if (!values.joinCode) {
             errors.joinCode = "Required";
           } else if (values.joinCode.length != JOIN_CODE_LEN) {
@@ -59,6 +66,12 @@ const JoinPage = (props: JoinPageProps): React.ReactElement => {
           return errors;
         }}
         onSubmit={(values, { setSubmitting }) => {
+          if (values.joinCode == DEVELOPER_MODE_TOGGLE) {
+            setSubmitting(false);
+            Store.set(developerModeEnabled, true);
+            return;
+          }
+
           joinGame(props.sendJsonMessage, values.joinCode, values.name).then(
             () => {
               setSubmitting(false);
