@@ -1,0 +1,4 @@
+[workspace]
+members = ["server", "tts"]
+exclude = ["tts/crates/piper-rs"]
+resolver = "3"
