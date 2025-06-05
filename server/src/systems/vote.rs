@@ -1,5 +1,6 @@
 use std::{collections::HashMap, sync::Arc};
 
+use dashmap::DashMap;
 use itertools::Itertools;
 use log::warn;
 use serde::{Deserialize, Serialize};
@@ -12,21 +13,22 @@ use crate::{
   models::{
     game::Game,
     user::{User, UserType},
-    vote::{UserVote, VoteBuilder, VoteOption, VoteType},
+    vote::{UserVote, Vote, VoteOption, VoteOptionContent, VoteType},
   },
   ws::{MessageResponse, SocketManager},
 };
 
 #[derive(Deserialize)]
-struct VoteStartTextOption {
-  host_id: String,
-  text: String,
+#[serde(tag = "type")]
+pub enum VoteStartOptionContent {
+  Text { text: String },
 }
 
 #[derive(Deserialize)]
-#[serde(tag = "type")]
-enum VoteStartOption {
-  Text(VoteStartTextOption),
+pub struct VoteStartOption {
+  pub host_id: String,
+  pub content: VoteStartOptionContent,
+  pub exclude_user: Option<Uuid>,
 }
 
 #[derive(Deserialize)]
@@ -56,16 +58,26 @@ impl VoteStartAction {
       ));
     }
 
-    let mut builder = VoteBuilder::new(self.vote_type, self.title);
-    for option in self.options {
-      match option {
-        VoteStartOption::Text(text) => {
-          builder.add_text_option(text.host_id, text.text);
-        }
-      }
-    }
+    let vote = Vote {
+      id: Uuid::new_v4(),
+      title: self.title,
+      game_id: game.id,
+      vote_type: self.vote_type,
+      options: self
+        .options
+        .into_iter()
+        .map(|option| VoteOption {
+          id: Uuid::new_v4(),
+          host_id: option.host_id,
+          exclude_user: option.exclude_user,
+          content: match option.content {
+            VoteStartOptionContent::Text { text } => VoteOptionContent::Text { text },
+          },
+        })
+        .collect_vec(),
+      user_votes: DashMap::new(),
+    };
 
-    let vote = builder.build(game.id);
     let response = vote.to_client_response();
 
     socket_manager
@@ -111,10 +123,9 @@ impl VoteCastAction {
       return Err(SocketError::VoteNotFound);
     }
 
-    if !vote.options.iter().any(|option| match option {
-      crate::models::vote::VoteOption::Text(vote_text_option) => {
-        vote_text_option.id == self.option_id
-      }
+    if !vote.options.iter().any(|option| {
+      option.id == self.option_id
+        && (option.exclude_user.is_none() || option.exclude_user.unwrap() != user.id)
     }) {
       return Err(SocketError::ValidationError(
         "Vote option not found".to_string().into(),
@@ -200,17 +211,7 @@ impl VoteEndAction {
 
     let mut options = HashMap::new();
     for option in vote.options.drain(0..) {
-      match option {
-        VoteOption::Text(text) => {
-          options.insert(
-            text.id,
-            VoteEndResponseOption {
-              option: VoteOption::Text(text),
-              score: 0,
-            },
-          );
-        }
-      }
+      options.insert(option.id, VoteEndResponseOption { option, score: 0 });
     }
 
     for kv in &vote.user_votes {

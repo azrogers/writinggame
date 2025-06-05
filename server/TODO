@@ -3,8 +3,10 @@ Tasks:
 		- update session state with new session id
 	☐ handle users leaving during lobby
 	☐ handle users with duplicate names
+	✔ handle votes on a user's own option @done(25-06-04 22:40)
 	☐ tests
 
 possible bugs:
-	☐ find some way to deal with "zombie" games (not completed, all users left)
-		☐ destroy game when host leaves
+	✔ find some way to deal with "zombie" games (not completed, all users left) @done(25-06-04 23:02)
+		✔ destroy game when host leaves @done(25-06-04 23:02)
+		

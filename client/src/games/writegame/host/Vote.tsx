@@ -84,7 +84,7 @@ const Vote = (props: VoteProps) => {
               return (
                 <ListItem key={"option-" + option.id}>
                   <ListContent>
-                    <ListHeader>{option.text}</ListHeader>
+                    <ListHeader>{option.content.text}</ListHeader>
                     <ul>
                       {(votesPerOption[option.id] || []).map(formatVoteRow)}
                     </ul>

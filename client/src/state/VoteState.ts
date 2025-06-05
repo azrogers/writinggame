@@ -5,13 +5,18 @@ import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 
 export type VoteType = "Single" | "Ranked";
 
-type VoteOption = {
+export type VoteOptionContent = {
   type: "Text";
-  id: string;
-  host_id: string;
-  score: number;
   text: string;
 };
+
+export interface VoteOption {
+  id: string;
+  host_id: string;
+  exclude_user: string | null;
+  score: number;
+  content: VoteOptionContent;
+}
 
 export const isVoteActive = atom<boolean>(false);
 export const voteId = atom<string | null>(null);
@@ -20,7 +25,7 @@ export const voteType = atom<VoteType>("Single");
 export const voteOptions = atom<VoteOption[]>([]);
 
 export const voteOptionSelectedCount = atom<number>(0);
-export const voteOptionsSelected = atom<{ [title: string]: boolean }>({});
+export const voteOptionsSelected = atom<{ [id: string]: boolean }>({});
 
 export enum HostVoteState {
   None,
@@ -76,6 +81,7 @@ export function initVoteHandlers() {
       Store.set(voteType, payload.vote_type);
       Store.set(voteOptions, payload.options);
       Store.set(isVoteActive, true);
+      Store.set(hostVoteState, HostVoteState.None);
     }
   );
 
@@ -104,11 +110,16 @@ export function initVoteHandlers() {
   );
 }
 
-export type VoteStartOption = {
+export type VoteStartOptionContent = {
   type: "Text";
-  host_id: string;
   text: string;
 };
+
+export interface VoteStartOption {
+  host_id: string;
+  exclude_user: string | null;
+  content: VoteStartOptionContent;
+}
 
 export function startVote(
   sendJsonMessage: SendJsonMessage,

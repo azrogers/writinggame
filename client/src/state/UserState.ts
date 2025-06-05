@@ -2,6 +2,7 @@ import { atom } from "jotai";
 import { MessageDispatcher } from "../MessageDispatcher";
 import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import { Store } from "./Store";
+import { GlobalGameState, globalGameState } from "./AppState";
 
 export const userId = atom<string | null>(null);
 export const userImplState = atom<object>({});
@@ -33,6 +34,12 @@ export function initUserHandlers() {
       setToken(payload.token);
     }
   );
+
+  MessageDispatcher.registerHandler<null>("user/disconnected", () => {
+    Store.set(globalGameState, GlobalGameState.Join);
+    Store.set(userId, null);
+    setToken(null);
+  });
 }
 
 export function joinGame(

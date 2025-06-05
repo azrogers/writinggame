@@ -1,3 +1,7 @@
+import { LogFactory } from "../lib/logger";
+
+const Logger = LogFactory.create("JsonLoader");
+
 export class JsonLoader {
   private static _jsonData: { [path: string]: any } = {};
   private static _loaders: { [path: string]: Promise<any> } = {};
@@ -21,5 +25,10 @@ export class JsonLoader {
     }
 
     return this._loaders[path];
+  }
+
+  static assertLoaded(path: string): any {
+    Logger.assert(this._jsonData[path]);
+    return this._jsonData[path];
   }
 }

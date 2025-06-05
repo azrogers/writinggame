@@ -35,6 +35,7 @@ pub enum SocketError {
   ValidationError(ErrorMessage),
   AlreadyJoinedGame,
   VoteNotFound,
+  PromptNotFound,
 }
 
 impl ToDisplayText for SocketError {
@@ -59,6 +60,7 @@ impl ToDisplayText for SocketError {
       }
       SocketError::AlreadyJoinedGame => "User has already joined a game".to_string(),
       SocketError::VoteNotFound => "Vote not found".to_string(),
+      SocketError::PromptNotFound => "Prompt not found".to_string(),
     }
   }
 }

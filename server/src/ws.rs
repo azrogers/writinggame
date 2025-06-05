@@ -15,6 +15,7 @@ use crate::{
   models::{game::Game, user::User},
   systems::{
     game::{GameHostAction, GameStartAction},
+    prompt::{PromptEndAction, PromptStartAction, PromptSubmitAction},
     user::{UserCheckGameAction, UserInitializeAction, UserJoinAction},
     vote::{VoteCastAction, VoteEndAction, VoteStartAction},
   },
@@ -44,7 +45,6 @@ impl SocketErrorResponse {
       error,
     };
 
-    debug!("sending message {response:?}");
     Message::text(serde_json::to_string(&response).unwrap())
   }
 }
@@ -64,7 +64,6 @@ impl SocketSuccessResponse {
       payload: serde_json::to_value(payload).unwrap(),
     };
 
-    debug!("sending message {response:?}");
     Message::text(serde_json::to_string(&response).unwrap())
   }
 }
@@ -97,6 +96,7 @@ impl SocketManager {
 
     tokio::task::spawn(async move {
       while let Some(message) = rx.next().await {
+        debug!("sending message {message:?}");
         user_ws_tx
           .send(message)
           .unwrap_or_else(|e| {
@@ -288,6 +288,33 @@ impl SocketManager {
       .await;
     } else if msg.action == "vote/end" {
       return VoteEndAction::on_receive(
+        serde_json::from_value(msg.payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
+        self,
+        game,
+        user,
+      )
+      .await;
+    } else if msg.action == "prompt/start" {
+      return PromptStartAction::on_receive(
+        serde_json::from_value(msg.payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
+        self,
+        game,
+        user,
+      )
+      .await;
+    } else if msg.action == "prompt/submit" {
+      return PromptSubmitAction::on_receive(
+        serde_json::from_value(msg.payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
+        self,
+        game,
+        user,
+      )
+      .await;
+    } else if msg.action == "prompt/end" {
+      return PromptEndAction::on_receive(
         serde_json::from_value(msg.payload)
           .map_err(|err| SocketError::Parse(err.to_string().into()))?,
         self,

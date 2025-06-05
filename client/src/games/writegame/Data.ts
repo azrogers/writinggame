@@ -33,4 +33,8 @@ export class Data {
       return s as Sentences;
     });
   }
+
+  static assertSentences(): Sentences {
+    return JsonLoader.assertLoaded(SENTENCES_FILE) as Sentences;
+  }
 }

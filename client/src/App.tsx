@@ -18,6 +18,7 @@ import { initVoteHandlers } from "./state/VoteState";
 import GamePage from "./games/GamePage";
 import { developerModeEnabled } from "./dev/DeveloperMode";
 import DeveloperPage from "./dev/DeveloperPage";
+import { initPromptHandlers } from "./state/PromptState";
 
 const SOCKET_URL: string = "ws://localhost:3030/ws";
 
@@ -31,6 +32,7 @@ function App() {
     initUserHandlers();
     initGameHandlers();
     initVoteHandlers();
+    initPromptHandlers();
   }, []);
 
   useEffect(() => {

@@ -39,6 +39,8 @@ export const gameUsers = atom<GameUserState[]>([]);
 export const creatingGame = atom(false);
 export const joinCode = atom<string | null>(null);
 
+export const gameRoundCount = atom(1);
+
 interface GameHostResponse {
   game_id: string;
   user_id: string;
@@ -79,6 +81,7 @@ export function initGameHandlers() {
       Store.set(gameImplState, payload.impl_state);
       Store.set(gameMode, payload.game_mode);
       Store.set(gameType, payload.game_type);
+      Store.set(gameRoundCount, 1);
     }
   );
 

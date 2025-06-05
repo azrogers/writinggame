@@ -1,6 +1,6 @@
 use std::{any::Any, sync::Arc};
 
-use actions::{InitialSentenceAction, LeaderStartGameAction};
+use actions::{LeaderStartGameAction, SentenceAction};
 use log::warn;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -21,16 +21,6 @@ mod actions;
 
 const MAX_PLAYERS: usize = 12;
 
-#[derive(Serialize, PartialEq, Debug)]
-pub enum RoundState {
-  Intro,
-  Writing,
-  Voting,
-  Intermission,
-  Reading,
-  Outro,
-}
-
 #[derive(Serialize)]
 pub struct Sentence {
   author: Option<Uuid>,
@@ -40,15 +30,13 @@ pub struct Sentence {
 pub struct WriteGameImplState {
   topic: String,
   sentences: Vec<Sentence>,
-  round_state: RoundState,
 }
 
 impl ImplState for WriteGameImplState {
   fn to_public_state(&self) -> serde_json::Value {
     json!({
       "sentences": self.sentences,
-      "topic": self.topic,
-      "round_state": self.round_state
+      "topic": self.topic
     })
   }
 }
@@ -79,7 +67,6 @@ impl WriteGameImpl {
     ImplStateContainer::new(WriteGameImplState {
       topic: String::default(),
       sentences: Vec::new(),
-      round_state: RoundState::Intro,
     })
   }
 
@@ -103,8 +90,8 @@ impl WriteGameImpl {
     action: &str,
     payload: serde_json::Value,
   ) -> Result<MessageResponse, crate::error::SocketError> {
-    if action == "wg/initial_sentence" {
-      return InitialSentenceAction::on_receive(
+    if action == "wg/sentence" {
+      return SentenceAction::on_receive(
         serde_json::from_value(payload)
           .map_err(|err| SocketError::Parse(err.to_string().into()))?,
         socket_manager,

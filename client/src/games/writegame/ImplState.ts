@@ -4,16 +4,12 @@ export interface WriteUserImplState {
   user_type: WriteGameUserType;
 }
 
-export type WriteGameRoundState =
-  | "Intro"
-  | "Writing"
-  | "Voting"
-  | "Intermission"
-  | "Reading"
-  | "Outro";
+export interface WriteGameSentence {
+  author: string | null;
+  text: string;
+}
 
 export interface WriteGameImplState {
   topic: string;
-  sentences: string[];
-  round_state: WriteGameRoundState;
+  sentences: WriteGameSentence[];
 }

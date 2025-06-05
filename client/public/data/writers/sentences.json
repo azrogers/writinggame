@@ -1,4 +1,12 @@
 {
+  "no_submission": {
+    "dictionaries": {},
+    "templates": [
+      "I'm not creative enough to think of a response!",
+      "Sometimes, I dream about cheese.",
+      "I'm so hungry I could eat a horse."
+    ]
+  },
   "linkedin": {
     "dictionaries": {
       "industry": [
@@ -134,6 +142,8 @@
   },
   "rap": {
     "dictionaries": {
+      "a": ["a", "a motherfucking", "a fucking"],
+      "an": ["an", "a motherfucking", "a fucking"],
       "location": [
         "club",
         "house",
@@ -144,14 +154,19 @@
         "street"
       ],
       "animal": [
-        "lion",
-        "wolf",
-        "Godzilla",
-        "King Kong",
-        "elephant",
-        "alligator"
+        "{a} lion",
+        "{a} wolf",
+        "{a} Godzilla",
+        "{a} King Kong",
+        "{an} elephant",
+        "{an} alligator"
       ],
-      "machine": ["bulldozer", "steamroller", "tank", "dumptruck"],
+      "machine": [
+        "{a} bulldozer",
+        "{a} steamroller",
+        "{a} tank",
+        "{a} dumptruck"
+      ],
       "person_own": [
         "your mom",
         "your girl",
@@ -171,17 +186,35 @@
         "dope",
         "lit"
       ],
-      "title": ["MC", "rapper", "rap god", "king", "demigod", "superior"]
+      "title": ["MC", "rapper", "rap god", "king", "demigod", "gangster"],
+      "lots_of_badass": [
+        "much money",
+        "many bitches",
+        "much ass",
+        "much respect",
+        "many deals",
+        "many opps"
+      ],
+      "like_im": [
+        "a liquid",
+        "a gas",
+        "a soldier",
+        "a spy",
+        "a machine",
+        "{animal}",
+        "{machine}"
+      ]
     },
     "templates": [
       "{%0.1}You know what they say - that's an awfully hot coffee pot.",
       "My {^rhymes,verse,lyrics} so {good} I bring down this {location}.",
-      "I'm tearing up these streets like a{^, motherfucking} {machine,animal}.",
-      "Way I {^rhyme,flow,vibe} I'm like a {machine,animal}.",
+      "I'm tearing up these streets like {machine,animal}.",
+      "Way I {^rhyme,flow,vibe} I'm like {machine,animal}.",
       "Gotta tell you now, I {^fucked,banged,did,sucked off,ate out} {person_own}.",
       "Get ready for this shit, it's a real {location,good} {^beat,rap,flow}.",
       "Talked to {person_own} - they called me the #1 {title}.",
-      "{^Where I'm from I'm known as,Don't step to me I'm the,You better recognize I'm the} the ultimate {title}."
+      "{^Where I'm from I'm known as,Don't step to me I'm,You better recognize I'm} the ultimate {title}.",
+      "{^Get,Got} so {lots_of_badass} cause {^I'm moving like,I flow like,I duck like, I weave like} {like_im}."
     ]
   }
 }

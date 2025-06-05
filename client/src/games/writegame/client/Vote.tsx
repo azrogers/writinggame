@@ -5,10 +5,12 @@ import {
   voteId,
   voteOptions,
   voteOptionSelectedCount,
+  voteOptionsSelected,
   voteTitle,
   voteType,
 } from "../../../state/VoteState";
 import { Button, List, ListContent, ListItem } from "semantic-ui-react";
+import { userId } from "../../../state/UserState";
 
 interface VoteProps {
   sendJsonMessage: SendJsonMessage;
@@ -20,6 +22,8 @@ const Vote = (props: VoteProps) => {
   const [_options] = useAtom(voteOptions);
   const [_voteType] = useAtom(voteType);
   const [_voteOptionSelectedCount] = useAtom(voteOptionSelectedCount);
+  const [_voteOptionsSelected] = useAtom(voteOptionsSelected);
+  const [_userId] = useAtom(userId);
 
   if (!_voteId) {
     return <p>No vote!</p>;
@@ -39,18 +43,22 @@ const Vote = (props: VoteProps) => {
       <p>{canVote ? _voteTitle : "Waiting"}</p>
       <List relaxed="very">
         {canVote
-          ? _options.map((option) => {
-              const optionId = option.id;
-              return (
-                <ListItem key={"option-" + optionId}>
-                  <ListContent>
-                    <Button onClick={() => selectVoteOption(optionId)}>
-                      {option.text}
-                    </Button>
-                  </ListContent>
-                </ListItem>
-              );
-            })
+          ? _options
+              .filter(
+                (o) => !_voteOptionsSelected[o.id] && o.exclude_user != _userId
+              )
+              .map((option) => {
+                const optionId = option.id;
+                return (
+                  <ListItem key={"option-" + optionId}>
+                    <ListContent>
+                      <Button onClick={() => selectVoteOption(optionId)}>
+                        {option.content.text}
+                      </Button>
+                    </ListContent>
+                  </ListItem>
+                );
+              })
           : []}
       </List>
     </div>

@@ -3,6 +3,7 @@ use std::sync::Arc;
 use log::{error, warn};
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
+use uuid::Uuid;
 
 use crate::{
   error::SocketError,
@@ -14,7 +15,7 @@ use crate::{
   ws::{MessageResponse, SocketManager},
 };
 
-use super::{RoundState, Sentence, WriteGameImplState, WriteGameUserType, WriteUserImplState};
+use super::{Sentence, WriteGameImplState, WriteGameUserType, WriteUserImplState};
 
 const MAX_SENTENCE_LENGTH: usize = 200;
 const MIN_USERS_TO_START: usize = 2;
@@ -59,15 +60,16 @@ impl LeaderStartGameAction {
 }
 
 #[derive(Deserialize)]
-pub struct InitialSentenceAction {
-  pub topic: String,
+pub struct SentenceAction {
+  pub topic: Option<String>,
   pub sentence: String,
+  pub sentence_author: Option<Uuid>,
 }
 
 #[derive(Serialize)]
-struct InitialSentenceResponse;
+struct SentenceResponse;
 
-impl InitialSentenceAction {
+impl SentenceAction {
   pub async fn on_receive(
     self,
     socket_manager: &SocketManager,
@@ -85,10 +87,7 @@ impl InitialSentenceAction {
 
     let user = user.read().await;
     if user.user_type != UserType::Host {
-      warn!(
-        "user {0} tried to call wg/initial_sentence, isn't host!",
-        user.id
-      );
+      warn!("user {0} tried to call wg/sentence, isn't host!", user.id);
       return Err(SocketError::HostOnlyAction);
     }
 
@@ -100,25 +99,13 @@ impl InitialSentenceAction {
     }
 
     let impl_state = impl_state.unwrap();
-    if impl_state.round_state != RoundState::Intro {
-      warn!(
-        "tried to use wg/initial_sentence in RoundStage {:?}",
-        impl_state.round_state
-      );
-      return Err(SocketError::ActionStateMismatch);
+    if let Some(topic) = self.topic {
+      impl_state.topic = topic;
     }
-
-    if !impl_state.sentences.is_empty() {
-      warn!("tried to use wg/initial_sentence but an initial sentence was already set");
-      return Err(SocketError::ActionStateMismatch);
-    }
-
-    impl_state.topic = self.topic;
     impl_state.sentences.push(Sentence {
-      author: None,
+      author: self.sentence_author,
       text: self.sentence,
     });
-		impl_state.round_state = RoundState::Writing;
 
     socket_manager
       .broadcast_to_game(
@@ -129,8 +116,8 @@ impl InitialSentenceAction {
       .await;
 
     Ok(Some((
-      "wg/initial_sentence".to_string(),
-      Box::new(InitialSentenceResponse {}),
+      "wg/sentence".to_string(),
+      Box::new(SentenceResponse {}),
     )))
   }
 }

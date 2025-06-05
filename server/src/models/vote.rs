@@ -5,28 +5,30 @@ use uuid::Uuid;
 
 #[derive(Serialize)]
 pub struct VoteTextOption {
-  pub id: Uuid,
-  pub host_id: String,
   pub text: String,
-}
-
-impl VoteTextOption {
-  pub fn to_client_response(&self) -> serde_json::Value {
-    json!({ "id": self.id, "text": self.text })
-  }
 }
 
 #[derive(Serialize)]
 #[serde(tag = "type")]
-pub enum VoteOption {
-  Text(VoteTextOption),
+pub enum VoteOptionContent {
+  Text { text: String },
+}
+
+#[derive(Serialize)]
+pub struct VoteOption {
+  pub id: Uuid,
+  pub host_id: String,
+  pub exclude_user: Option<Uuid>,
+  pub content: VoteOptionContent,
 }
 
 impl VoteOption {
   pub fn to_client_response(&self) -> serde_json::Value {
-    match self {
-      VoteOption::Text(vote_text_option) => vote_text_option.to_client_response(),
-    }
+    json!({
+      "id": self.id,
+      "exclude_user": self.exclude_user,
+      "content": self.content
+    })
   }
 }
 
@@ -64,40 +66,5 @@ impl Vote {
       "vote_type": self.vote_type,
       "options": options
     })
-  }
-}
-
-pub struct VoteBuilder {
-  vote_type: VoteType,
-  title: String,
-  options: Vec<VoteOption>,
-}
-
-impl VoteBuilder {
-  pub fn new(vote_type: VoteType, title: String) -> Self {
-    Self {
-      vote_type,
-      title,
-      options: Vec::new(),
-    }
-  }
-
-  pub fn add_text_option(&mut self, host_id: String, text: String) {
-    self.options.push(VoteOption::Text(VoteTextOption {
-      id: Uuid::new_v4(),
-      host_id,
-      text,
-    }))
-  }
-
-  pub fn build(self, game_id: Uuid) -> Vote {
-    Vote {
-      id: Uuid::new_v4(),
-      game_id,
-      title: self.title,
-      vote_type: self.vote_type,
-      options: self.options,
-      user_votes: DashMap::new(),
-    }
   }
 }

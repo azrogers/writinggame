@@ -1,6 +1,7 @@
 use as_any::{AsAny, Downcast};
 
 pub mod game;
+pub mod prompt;
 pub mod user;
 pub mod vote;
 
