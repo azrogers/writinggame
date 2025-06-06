@@ -13,6 +13,7 @@ import ClientVote from "./client/Vote";
 import HostVote from "./host/Vote";
 import { useEffect } from "react";
 import {
+  HostUIState,
   hostUiState,
   initWriteGameHandlers,
   onTimerExpire,
@@ -29,6 +30,8 @@ import {
   promptUserResponses,
 } from "../../state/PromptState";
 import WriteSentence from "./host/WriteSentence";
+import Scoring from "./host/Scoring";
+import Winner from "./host/Winner";
 
 interface GamePageProps {
   sendJsonMessage: SendJsonMessage;
@@ -55,8 +58,12 @@ const GamePage = (props: GamePageProps) => {
   });
 
   useEffect(() => {
-    initWriteGameHandlers(props.sendJsonMessage, restart);
+    initWriteGameHandlers(props.sendJsonMessage);
   }, []);
+
+  useEffect(() => {
+    onUiStateChange(props.sendJsonMessage, _hostUiState, restart);
+  }, [_hostUiState, _isVoteActive, _isPromptActive]);
 
   const stopTimer = () => {
     if (isRunning) {
@@ -84,15 +91,15 @@ const GamePage = (props: GamePageProps) => {
     }
   }
 
-  if (_hostPromptState == HostPromptState.Active && isRunning) {
+  if (
+    _hostPromptState == HostPromptState.Active &&
+    isRunning &&
+    _hostUiState == HostUIState.WriteSentence
+  ) {
     if (_userPromptResponses.length >= _users.length) {
       stopTimer();
     }
   }
-
-  useEffect(() => {
-    onUiStateChange(props.sendJsonMessage, _hostUiState, restart);
-  }, [_hostUiState, _isVoteActive, _isPromptActive]);
 
   if (_isHosting) {
     if (_hostVoteState != HostVoteState.None) {
@@ -103,6 +110,12 @@ const GamePage = (props: GamePageProps) => {
           stopTimer={stopTimer}
         />
       );
+    }
+
+    if (_hostUiState == HostUIState.Scoring) {
+      return <Scoring timerSeconds={totalSeconds} />;
+    } else if (_hostUiState == HostUIState.AwardWinner) {
+      return <Winner timerSeconds={totalSeconds} />;
     }
 
     return <WriteSentence timerSeconds={totalSeconds} />;

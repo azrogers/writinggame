@@ -161,3 +161,7 @@ export function hostGame(sendJsonMessage: SendJsonMessage) {
 export function startGameLeader(sendJsonMessage: SendJsonMessage) {
   MessageDispatcher.sendMessage(sendJsonMessage, "wg/leader_start_game", null);
 }
+
+export function endGame(sendJsonMessage: SendJsonMessage) {
+  MessageDispatcher.sendMessage(sendJsonMessage, "game/end", null);
+}

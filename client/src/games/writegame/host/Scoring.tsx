@@ -41,6 +41,8 @@ const Scoring = (props: ScoringProps) => {
     });
   });
 
+  scoreUsers.sort((a, b) => b.score - a.score);
+
   return (
     <div>
       <Grid>

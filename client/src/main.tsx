@@ -1,10 +1,12 @@
-import { type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
-import { Provider } from "jotai";
+import { Provider, useAtom } from "jotai";
 import { Store } from "./state/Store.ts";
 import "semantic-ui-css/semantic.min.css";
 import { useAtomsDevtools } from "jotai-devtools";
+import { endpointConfig } from "./state/AppState.ts";
+import { EndpointConfigLoader } from "./Endpoints.ts";
 
 interface AtomsDevtoolsProps {
   children: ReactNode;
@@ -16,10 +18,27 @@ const AtomsDevtools = (props: AtomsDevtoolsProps) => {
   return props.children;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
+const EndpointLoader = () => {
+  const [_endpointConfig, _setEndpointConfig] = useAtom(endpointConfig);
+
+  useEffect(() => {
+    EndpointConfigLoader.load().then((config) => {
+      _setEndpointConfig(config);
+    });
+  }, []);
+
+  if (!_endpointConfig) {
+    return <></>;
+  }
+
+  return <App />;
+};
+
 createRoot(document.getElementById("root")!).render(
   <Provider store={Store}>
     <AtomsDevtools>
-      <App />
+      <EndpointLoader />
     </AtomsDevtools>
   </Provider>
 );

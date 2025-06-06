@@ -80,6 +80,7 @@ export function initVoteHandlers() {
       Store.set(voteTitle, payload.title);
       Store.set(voteType, payload.vote_type);
       Store.set(voteOptions, payload.options);
+      Store.set(voteUserVotes, []);
       Store.set(isVoteActive, true);
       Store.set(hostVoteState, HostVoteState.None);
     }
@@ -127,6 +128,7 @@ export function startVote(
   title: string,
   options: VoteStartOption[]
 ) {
+  Store.set(voteUserVotes, []);
   MessageDispatcher.sendMessage(sendJsonMessage, "vote/start", {
     vote_type: type,
     title: title,

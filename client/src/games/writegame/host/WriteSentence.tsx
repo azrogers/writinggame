@@ -15,7 +15,7 @@ const WriteSentence = (props: WriteSentenceProps) => {
 
   const implState = _implState as WriteGameImplState;
   if (!_hostGameTopic) {
-    return <></>;
+    return <p>no host game topic</p>;
   }
 
   let sentenceContent = <></>;

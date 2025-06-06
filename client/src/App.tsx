@@ -3,6 +3,7 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 
 import {
   connectionState,
+  endpointConfig,
   GlobalGameState,
   globalGameState,
 } from "./state/AppState";
@@ -20,10 +21,11 @@ import { developerModeEnabled } from "./dev/DeveloperMode";
 import DeveloperPage from "./dev/DeveloperPage";
 import { initPromptHandlers } from "./state/PromptState";
 
-const SOCKET_URL: string = "ws://localhost:3030/ws";
-
 function App() {
-  const { lastMessage, readyState, sendJsonMessage } = useWebSocket(SOCKET_URL);
+  const [_endpointConfig] = useAtom(endpointConfig);
+  const { lastMessage, readyState, sendJsonMessage } = useWebSocket(
+    _endpointConfig?.websocket_url || ""
+  );
   const [_connectionState, setConnectionState] = useAtom(connectionState);
   const [_globalGameState] = useAtom(globalGameState);
   const [_developerMode] = useAtom(developerModeEnabled);

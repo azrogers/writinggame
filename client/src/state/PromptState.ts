@@ -64,6 +64,7 @@ export function initPromptHandlers() {
       Store.set(promptId, payload.id);
       Store.set(promptTitle, payload.title);
       Store.set(promptType, payload.prompt_type);
+      Store.set(promptUserResponses, []);
       Store.set(isPromptActive, true);
       Store.set(hostPromptState, HostPromptState.None);
     }
@@ -93,6 +94,7 @@ export function startPrompt(
   type: PromptType,
   title: string
 ) {
+  Store.set(promptUserResponses, []);
   MessageDispatcher.sendMessage(sendJsonMessage, "prompt/start", {
     prompt_type: type,
     title: title,

@@ -1,0 +1,4 @@
+{
+  "websocket_url": "ws://localhost:3030/ws",
+  "tts_url": "http://localhost:3031/tts"
+}

@@ -111,14 +111,19 @@ async fn main() {
 
   let port = config.port;
 
-  let tts = warp::get()
+  let tts = warp::post()
     .and(warp::path("tts"))
     .and(warp::any().map(move || config.clone()))
     .and(warp::any().map(move || pool.clone()))
-    //.and(warp::body::content_length_limit(1024 * 32))
-    //.and(warp::body::json())
-    .and(warp::query())
-    .and_then(tts_handler);
+    .and(warp::body::content_length_limit(1024 * 32))
+    .and(warp::body::json())
+    .and_then(tts_handler)
+    .with(
+      warp::cors()
+        .allow_any_origin()
+        .allow_header("content-type")
+        .allow_method("POST"),
+    );
 
   info!("starting server on port {port}");
   warp::serve(tts).run(([127, 0, 0, 1], port)).await

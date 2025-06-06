@@ -118,3 +118,25 @@ impl GameStartAction {
     Ok(None)
   }
 }
+
+#[derive(Deserialize)]
+pub struct GameEndAction;
+
+impl GameEndAction {
+  pub async fn on_receive(
+    self,
+    socket_manager: &SocketManager,
+    game: Arc<RwLock<Game>>,
+    user: Arc<RwLock<User>>,
+  ) -> Result<MessageResponse, SocketError> {
+    let user = user.read().await;
+    if user.user_type != UserType::Host {
+      return Err(SocketError::HostOnlyAction);
+    }
+
+    let id = game.read().await.id;
+    socket_manager.database.game_remove(id).await;
+
+    Ok(None)
+  }
+}

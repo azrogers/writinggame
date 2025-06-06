@@ -36,7 +36,7 @@ const Prompt = (props: PromptProps) => {
 
   let promptInput = <></>;
   let canSubmit = false;
-  if (_promptType.type == "Text") {
+  if (!_promptSubmitted && _promptType.type == "Text") {
     promptInput = (
       <Input
         type="text"

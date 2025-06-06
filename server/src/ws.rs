@@ -14,7 +14,7 @@ use crate::{
   games::GameManager,
   models::{game::Game, user::User},
   systems::{
-    game::{GameHostAction, GameStartAction},
+    game::{GameEndAction, GameHostAction, GameStartAction},
     prompt::{PromptEndAction, PromptStartAction, PromptSubmitAction},
     user::{UserCheckGameAction, UserInitializeAction, UserJoinAction},
     vote::{VoteCastAction, VoteEndAction, VoteStartAction},
@@ -268,6 +268,8 @@ impl SocketManager {
 
     if msg.action == "game/start" {
       return GameStartAction::on_receive(GameStartAction {}, self, game, user).await;
+    } else if msg.action == "game/end" {
+      return GameEndAction::on_receive(GameEndAction {}, self, game, user).await;
     } else if msg.action == "vote/start" {
       return VoteStartAction::on_receive(
         serde_json::from_value(msg.payload)
