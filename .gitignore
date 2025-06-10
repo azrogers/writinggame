@@ -22,3 +22,5 @@ Session.vim
 *.rdb
 
 /target
+
+config.docker.json

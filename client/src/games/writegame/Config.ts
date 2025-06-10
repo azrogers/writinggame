@@ -8,4 +8,4 @@ export const sentenceScoringDuration = 15.0;
 export const sentenceTtsWaitDuration = 5.0;
 export const sentenceWinnerDuration = 20.0;
 
-export const roundCount = 2;
+export const roundCount = 5;

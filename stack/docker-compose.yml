@@ -1,0 +1,17 @@
+services:
+  web:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../client/dist/:/opt/writinggame:ro
+    command: [nginx-debug, "-g", "daemon off;"]
+    ports:
+      - "3029:8080"
+  tts:
+    image: tts:latest
+    ports:
+      - "3031:8080"
+  wg-server:
+    image: writinggame-server
+    ports:
+      - "3030:8080"

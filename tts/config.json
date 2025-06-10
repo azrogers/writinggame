@@ -1,5 +1,5 @@
 {
-  "port": "3031",
+  "port": 3031,
   "pool_size": 5,
   "speaker_count": 904
 }

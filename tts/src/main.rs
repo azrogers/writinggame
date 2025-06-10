@@ -126,5 +126,5 @@ async fn main() {
     );
 
   info!("starting server on port {port}");
-  warp::serve(tts).run(([127, 0, 0, 1], port)).await
+  warp::serve(tts).run(([0, 0, 0, 0], port)).await
 }

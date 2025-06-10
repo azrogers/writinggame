@@ -6,13 +6,6 @@ appenders:
   stdout:
     kind: console
 
-  # An appender named "requests" that writes to a file with a custom pattern encoder
-  requests:
-    kind: file
-    path: "log/requests.log"
-    encoder:
-      pattern: "{d} - {m}{n}"
-
 # Set the default logging level to "warn" and attach the "stdout" appender to the root
 root:
   level: debug

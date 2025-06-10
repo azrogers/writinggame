@@ -93,7 +93,7 @@ impl PromptSubmitAction {
       .database
       .prompts
       .get(&self.prompt_id)
-      .ok_or(SocketError::VoteNotFound)?;
+      .ok_or(SocketError::PromptNotFound)?;
 
     if prompt.game_id != game.id {
       return Err(SocketError::PromptNotFound);
@@ -166,7 +166,7 @@ impl PromptEndAction {
       .database
       .prompts
       .remove(&self.prompt_id)
-      .ok_or(SocketError::VoteNotFound)?;
+      .ok_or(SocketError::PromptNotFound)?;
 
     let responses = prompt
       .user_responses

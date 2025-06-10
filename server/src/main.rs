@@ -1,5 +1,3 @@
-#![feature(trait_alias)]
-
 use std::convert::Infallible;
 
 use app_config::AppConfig;
@@ -74,7 +72,5 @@ async fn main() {
     .map(ws_handler)
     .recover(rejection_handler);
 
-  warp::serve(ws_route)
-    .run(([127, 0, 0, 1], config.port))
-    .await;
+  warp::serve(ws_route).run(([0, 0, 0, 0], config.port)).await;
 }
