@@ -30,6 +30,7 @@ pub struct User {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct JwtTokenContents {
   pub user_id: Uuid,
+  pub game_id: Uuid,
   pub user_type: UserType,
   pub created: DateTime<Utc>,
   pub expires: DateTime<Utc>,
@@ -66,7 +67,7 @@ impl User {
     Ok(contents)
   }
 
-  pub fn create_token(&self, config: &AppConfig) -> Result<String, SocketError> {
+  pub fn create_token(&self, game_id: Uuid, config: &AppConfig) -> Result<String, SocketError> {
     let key: Hmac<Sha256> =
       Hmac::new_from_slice(config.token_secret.as_bytes()).map_err(|err| {
         error!("Failed to create token hmac: {err:?}");
@@ -75,6 +76,7 @@ impl User {
     let expires = chrono::offset::Utc::now() + chrono::Duration::seconds(config.token_duration);
     let contents = JwtTokenContents {
       user_id: self.id,
+      game_id,
       user_type: self.user_type,
       created: chrono::offset::Utc::now(),
       expires,

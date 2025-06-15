@@ -46,7 +46,7 @@ impl GameHostAction {
     )
     .await?;
 
-    let token = user.create_token(&socket_manager.config)?;
+    let token = user.create_token(game.id, &socket_manager.config)?;
 
     game.impl_state = GameManager::init_game_state(&game);
 

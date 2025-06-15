@@ -1,7 +1,16 @@
 import { Formik } from "formik";
 import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
-import { Button, Form, FormField, Input } from "semantic-ui-react";
-import { joinGame } from "../state/UserState";
+import {
+  Button,
+  Form,
+  FormField,
+  Grid,
+  GridColumn,
+  GridRow,
+  Header,
+  Input,
+} from "semantic-ui-react";
+import { getUserJoinInfo, joinGame } from "../state/UserState";
 import {
   checkGame,
   checkGameInfo,
@@ -12,6 +21,7 @@ import {
 import { useAtom } from "jotai";
 import { Store } from "../state/Store";
 import { developerModeEnabled } from "../dev/DeveloperMode";
+import { useEffect } from "react";
 
 const JOIN_CODE_LEN = 5;
 const DEVELOPER_MODE_TOGGLE = "$DEV$";
@@ -31,18 +41,22 @@ const JoinPage = (props: JoinPageProps): React.ReactElement => {
     checkGameInfoText = <p>{gameTypeToString(_checkGameInfo.game_type)}</p>;
   }
 
+  const userJoinInfo = getUserJoinInfo();
+
+  useEffect(() => {
+    if (userJoinInfo?.code) {
+      checkGame(props.sendJsonMessage, userJoinInfo?.code);
+    }
+  }, []);
+
   return (
     <>
-      <Button
-        onClick={() => {
-          setCreatingGame(true);
-          hostGame(props.sendJsonMessage);
-        }}
-        disabled={_creatingGame}>
-        Host Game
-      </Button>
+      <Header size="huge">Write Warz</Header>
       <Formik
-        initialValues={{ joinCode: "", name: "" }}
+        initialValues={{
+          joinCode: userJoinInfo?.code ?? "",
+          name: userJoinInfo?.name ?? "",
+        }}
         validate={(values) => {
           const errors: { [name: string]: string | undefined } = {};
           if (values.joinCode == DEVELOPER_MODE_TOGGLE) {
@@ -129,12 +143,40 @@ const JoinPage = (props: JoinPageProps): React.ReactElement => {
                 }
               }
             />
-            <FormField
-              control={Button}
-              type="Submit"
-              disabled={isSubmitting || _creatingGame}
-              content="Join"
-            />
+            <Grid>
+              <GridRow>
+                <GridColumn width={2}>
+                  <FormField
+                    control={Button}
+                    primary
+                    type="Submit"
+                    disabled={isSubmitting || _creatingGame}
+                    content={
+                      userJoinInfo?.code &&
+                      userJoinInfo?.name &&
+                      _checkGameInfo &&
+                      _checkGameInfo !== true &&
+                      _checkGameInfo.should_rejoin
+                        ? "Reconnect"
+                        : "Join"
+                    }
+                  />
+                </GridColumn>
+                <GridColumn width={10} />
+                <GridColumn width={4}>
+                  <Button
+                    onClick={() => {
+                      setCreatingGame(true);
+                      hostGame(props.sendJsonMessage);
+                    }}
+                    floated="right"
+                    secondary
+                    disabled={_creatingGame}>
+                    Host Game
+                  </Button>
+                </GridColumn>
+              </GridRow>
+            </Grid>
           </Form>
         )}
       </Formik>

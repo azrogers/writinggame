@@ -1,0 +1,11 @@
+/*******************************
+     User Global Variables
+*******************************/
+@fontName : "Maitree", serif;
+@headerFont: "David Libre", serif;
+
+@primaryColor: #E6994D;
+@secondaryColor: #8862E3;
+
+@lightPrimaryColor: lighten(@primaryColor, 10%);
+@lightSecondaryColor: lighten(@secondaryColor, 10%);

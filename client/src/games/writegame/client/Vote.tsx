@@ -9,7 +9,15 @@ import {
   voteTitle,
   voteType,
 } from "../../../state/VoteState";
-import { Button, List, ListContent, ListItem } from "semantic-ui-react";
+import {
+  Button,
+  Grid,
+  GridColumn,
+  GridRow,
+  List,
+  ListContent,
+  ListItem,
+} from "semantic-ui-react";
 import { userId } from "../../../state/UserState";
 
 interface VoteProps {
@@ -39,29 +47,34 @@ const Vote = (props: VoteProps) => {
       : _voteOptionSelectedCount < Math.min(_options.length, 3);
 
   return (
-    <div>
-      <p>{canVote ? _voteTitle : "Waiting"}</p>
-      <List relaxed="very">
-        {canVote
-          ? _options
-              .filter(
-                (o) => !_voteOptionsSelected[o.id] && o.exclude_user != _userId
-              )
-              .map((option) => {
-                const optionId = option.id;
-                return (
-                  <ListItem key={"option-" + optionId}>
-                    <ListContent>
-                      <Button onClick={() => selectVoteOption(optionId)}>
-                        {option.content.text}
-                      </Button>
-                    </ListContent>
-                  </ListItem>
-                );
-              })
-          : []}
-      </List>
-    </div>
+    <Grid centered>
+      <GridRow>
+        <GridColumn width={4} style={{ textAlign: "center" }}>
+          <p>{canVote ? _voteTitle : "Waiting"}</p>
+          <List relaxed="very">
+            {canVote
+              ? _options
+                  .filter(
+                    (o) =>
+                      !_voteOptionsSelected[o.id] && o.exclude_user != _userId
+                  )
+                  .map((option) => {
+                    const optionId = option.id;
+                    return (
+                      <ListItem key={"option-" + optionId}>
+                        <ListContent>
+                          <Button onClick={() => selectVoteOption(optionId)}>
+                            {option.content.text}
+                          </Button>
+                        </ListContent>
+                      </ListItem>
+                    );
+                  })
+              : []}
+          </List>
+        </GridColumn>
+      </GridRow>
+    </Grid>
   );
 };
 

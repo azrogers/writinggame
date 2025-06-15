@@ -16,7 +16,7 @@ use crate::{
   systems::{
     game::{GameEndAction, GameHostAction, GameStartAction},
     prompt::{PromptEndAction, PromptStartAction, PromptSubmitAction},
-    user::{UserCheckGameAction, UserInitializeAction, UserJoinAction},
+    user::{UserCheckGameAction, UserInitializeAction, UserJoinAction, UserRejoinAction},
     vote::{VoteCastAction, VoteEndAction, VoteStartAction},
   },
 };
@@ -159,18 +159,8 @@ impl SocketManager {
     let msg = serde_json::from_str::<SocketMessage>(msg)
       .map_err(|err| SocketError::Parse(err.to_string().into()))?;
 
-    // user/initialize - creates a new user and token
-    if msg.action == "user/initialize" {
-      return UserInitializeAction::on_receive(
-        serde_json::from_value(msg.payload)
-          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
-        self,
-        session_id,
-      )
-      .await;
-    }
     // game/host - creates a new game and host user
-    else if msg.action == "game/host" {
+    if msg.action == "game/host" {
       return GameHostAction::on_receive(
         serde_json::from_value(msg.payload)
           .map_err(|err| SocketError::Parse(err.to_string().into()))?,
@@ -185,6 +175,16 @@ impl SocketManager {
         serde_json::from_value(msg.payload)
           .map_err(|err| SocketError::Parse(err.to_string().into()))?,
         self,
+      )
+      .await;
+    }
+    // user/join - join a game using a join code
+    else if msg.action == "user/join" {
+      return UserJoinAction::on_receive(
+        serde_json::from_value(msg.payload)
+          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
+        self,
+        session_id,
       )
       .await;
     }
@@ -209,38 +209,22 @@ impl SocketManager {
     let user_session_id = user.read().await.session_id;
     // handle swapping to a new session
     if user_session_id != session_id {
-      let mut new_game_id: Option<Uuid> = None;
-      if let Some(old_session) = self.database.sessions.get(&user_session_id) {
-        if let Some(game_id) = old_session.game_id {
-          if let Some(mut sessions) = self.database.game_to_sessions.get_mut(&game_id) {
-            sessions.insert(session_id);
-          }
-
-          new_game_id = Some(game_id);
-        }
-      }
-
       let user_id = user.read().await.id;
+      if let Some(mut sessions) = self
+        .database
+        .game_to_sessions
+        .get_mut(&token_contents.game_id)
+      {
+        sessions.remove(&user_session_id);
+      }
       if let Some(mut session) = self.database.sessions.get_mut(&session_id) {
-        session.game_id = new_game_id;
+        session.game_id = Some(token_contents.game_id);
         session.user_id = Some(user_id);
       }
 
       self.database.user_to_session.insert(user_id, session_id);
       let mut user_mut = user.write().await;
       user_mut.session_id = session_id;
-    }
-
-    // user/join - join a game using a join code
-    if msg.action == "user/join" {
-      return UserJoinAction::on_receive(
-        serde_json::from_value(msg.payload)
-          .map_err(|err| SocketError::Parse(err.to_string().into()))?,
-        self,
-        session_id,
-        user,
-      )
-      .await;
     }
 
     let game_id = self
@@ -324,6 +308,8 @@ impl SocketManager {
         user,
       )
       .await;
+    } else if msg.action == "user/rejoin" {
+      return UserRejoinAction::on_receive(UserRejoinAction {}, self, game, user).await;
     }
 
     return GameManager::on_action(self, game, user, &msg.action, msg.payload).await;

@@ -12,12 +12,12 @@ const ALPHABET: [char; 26] = [
   'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
 ];
 
-#[derive(Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Copy)]
 pub enum GameType {
   WriteGame,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Copy)]
 pub enum GameMode {
   Normal,
 }

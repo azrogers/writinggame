@@ -205,11 +205,14 @@ export function onUiStateChange(
     const expire = new Date();
     expire.setSeconds(expire.getSeconds() + sentenceScoringDuration);
     timerRestart(expire, true);
+    const options = Store.get(voteOptions);
+    const optionsMap: { [id: string]: string } = {};
+    options.forEach((opt) => (optionsMap[opt.id] = opt.host_id));
     const scores = Store.get(hostUserScores);
     Store.get(voteUserVotes).forEach((userVote) => {
-      const scoreObj = scores[userVote.user_id];
-      let score = 0;
       userVote.votes.forEach((vote) => {
+        const scoreObj = scores[optionsMap[vote.option_id]];
+        let score = 0;
         if (vote.value == 1) {
           score += 1000;
         } else if (vote.value == 2) {
@@ -217,10 +220,9 @@ export function onUiStateChange(
         } else if (vote.value == 3) {
           score += 250;
         }
+        scoreObj.score += score;
+        scoreObj.scoreAdded = score;
       });
-
-      scoreObj.score += score;
-      scoreObj.scoreAdded = score;
     });
     Store.set(hostUserScores, scores);
   } else if (newState == HostUIState.DisplayFinalSentences) {
@@ -255,7 +257,9 @@ export function onTimerExpire(
   }
   if (state == HostUIState.ChooseTopic) {
     if (Store.get(hostVoteState) == HostVoteState.Active) {
-      endVote(sendJsonMessage, Store.get(voteId) || "");
+      setTimeout(() => {
+        endVote(sendJsonMessage, Store.get(voteId) || "");
+      }, 3000);
     } else if (Store.get(hostVoteState) == HostVoteState.Finished) {
       Store.set(hostVoteState, HostVoteState.None);
       const options = Store.get(voteOptions);
@@ -283,11 +287,15 @@ export function onTimerExpire(
     }
   } else if (state == HostUIState.WriteSentence) {
     if (Store.get(hostPromptState) == HostPromptState.Active) {
-      endPrompt(sendJsonMessage, Store.get(promptId) || "");
+      setTimeout(() => {
+        endPrompt(sendJsonMessage, Store.get(promptId) || "");
+      }, 3000);
     }
   } else if (state == HostUIState.VoteSentence) {
     if (Store.get(hostVoteState) == HostVoteState.Active) {
-      endVote(sendJsonMessage, Store.get(voteId) || "");
+      setTimeout(() => {
+        endVote(sendJsonMessage, Store.get(voteId) || "");
+      }, 3000);
     } else if (Store.get(hostVoteState) == HostVoteState.Finished) {
       Store.set(hostVoteState, HostVoteState.None);
       const winningSentence = selectWinningVote(Store.get(voteOptions));

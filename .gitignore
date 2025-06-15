@@ -20,6 +20,7 @@ Session.vim
 .dir-locals.el
 
 *.rdb
+*.tar
 
 /target
 

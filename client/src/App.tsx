@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import { MessageDispatcher } from "./MessageDispatcher";
 import JoinPage from "./games/JoinPage";
 import { Container } from "semantic-ui-react";
-import { initUserHandlers } from "./state/UserState";
+import { getToken, initUserHandlers, setToken } from "./state/UserState";
 import { useAtom } from "jotai";
 import { initGameHandlers, initGameHandlersWithSend } from "./state/GameState";
 import LobbyPage from "./games/LobbyPage";
@@ -23,12 +23,16 @@ import { initPromptHandlers } from "./state/PromptState";
 
 function App() {
   const [_endpointConfig] = useAtom(endpointConfig);
-  const { lastMessage, readyState, sendJsonMessage } = useWebSocket(
-    _endpointConfig?.websocket_url || ""
-  );
+  const { lastMessage, readyState, sendJsonMessage, getWebSocket } =
+    useWebSocket(_endpointConfig?.websocket_url || "", {
+      shouldReconnect: () => true,
+    });
   const [_connectionState, setConnectionState] = useAtom(connectionState);
   const [_globalGameState] = useAtom(globalGameState);
   const [_developerMode] = useAtom(developerModeEnabled);
+
+  (window as any)["getWebSocket"] = getWebSocket;
+  (window as any)["setToken"] = setToken;
 
   useEffect(() => {
     initUserHandlers();
@@ -54,6 +58,10 @@ function App() {
       readyState == ReadyState.OPEN
     ) {
       toast("Connected!", { type: "success" });
+
+      if (getToken() != null && _globalGameState != GlobalGameState.Join) {
+        MessageDispatcher.sendMessage(sendJsonMessage, "user/rejoin", null);
+      }
     }
 
     setConnectionState(readyState);

@@ -2,8 +2,9 @@ import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import { MessageDispatcher } from "../MessageDispatcher";
 import { atom } from "jotai";
 import { Store } from "./Store";
-import { setToken, userId, userImplState } from "./UserState";
+import { getToken, setToken, userId, userImplState } from "./UserState";
 import { GlobalGameState, globalGameState, isHosting } from "./AppState";
+import { IconsManager } from "../data/IconsManager";
 
 export type GameType = "WriteGame";
 export type GameMode = "Normal";
@@ -17,15 +18,17 @@ export function gameTypeToString(type: GameType) {
   return "Unknown Game";
 }
 
-interface GameUserState {
+export interface GameUserState {
   name: string | null;
   id: string;
   impl_state: object;
+  icon_id: number;
 }
 
 interface CheckGameResponse {
   game_type: GameType;
   game_mode: GameMode;
+  should_rejoin: boolean;
 }
 
 export const checkGameInfo = atom<CheckGameResponse | null | boolean>(null);
@@ -52,6 +55,19 @@ interface GameHostResponse {
 }
 
 interface UserJoinResponse {
+  user_id: string;
+  token: string;
+  user_impl_state: object;
+  game_id: string;
+  game_type: GameType;
+  game_mode: GameMode;
+  game_state: GameState;
+  impl_state: object;
+}
+
+interface UserRejoinResponse {
+  user_id: string;
+  user_impl_state: object;
   game_id: string;
   game_type: GameType;
   game_mode: GameMode;
@@ -88,6 +104,28 @@ export function initGameHandlers() {
   MessageDispatcher.registerHandler<UserJoinResponse>(
     "user/join",
     (payload) => {
+      setToken(payload.token);
+      Store.set(userImplState, payload.user_impl_state);
+      Store.set(userId, payload.user_id);
+      Store.set(gameId, payload.game_id);
+      Store.set(gameType, payload.game_type);
+      Store.set(gameMode, payload.game_mode);
+      Store.set(gameImplState, payload.impl_state);
+      if (payload.game_state == "Lobby") {
+        Store.set(globalGameState, GlobalGameState.Lobby);
+      } else if (payload.game_state == "Playing") {
+        Store.set(globalGameState, GlobalGameState.Game);
+      } else if (payload.game_state == "Concluded") {
+        Store.set(globalGameState, GlobalGameState.GameEnded);
+      }
+    }
+  );
+
+  MessageDispatcher.registerHandler<UserRejoinResponse>(
+    "user/rejoin",
+    (payload) => {
+      Store.set(userImplState, payload.user_impl_state);
+      Store.set(userId, payload.user_id);
       Store.set(gameId, payload.game_id);
       Store.set(gameType, payload.game_type);
       Store.set(gameMode, payload.game_mode);
@@ -105,6 +143,9 @@ export function initGameHandlers() {
   MessageDispatcher.registerHandler<UserJoinStateResponse>(
     "game/users",
     (payload) => {
+      payload.users.forEach((u) => {
+        u.icon_id = IconsManager.getOrAssignIcon(u.id);
+      });
       Store.set(gameUsers, payload.users);
       for (let i = 0; i < payload.users.length; i++) {
         if (payload.users[i].id == Store.get(userId)) {
@@ -147,10 +188,12 @@ export function checkGame(sendJsonMessage: SendJsonMessage, code: string) {
   Store.set(checkGameInfo, null);
   MessageDispatcher.sendMessage(sendJsonMessage, "user/check_game", {
     join_code: code.toUpperCase(),
+    token: getToken(),
   });
 }
 
 export function hostGame(sendJsonMessage: SendJsonMessage) {
+  IconsManager.reset();
   Store.set(isHosting, true);
   MessageDispatcher.sendMessage(sendJsonMessage, "game/host", {
     game_type: "WriteGame",

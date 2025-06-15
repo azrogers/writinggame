@@ -7,12 +7,13 @@ import {
   List,
   ListContent,
   ListHeader,
-  ListIcon,
   ListItem,
 } from "semantic-ui-react";
 import { gameUsers, joinCode } from "../../../state/GameState";
 import { useEffect } from "react";
 import { Data } from "../Data";
+import Username from "../components/Username";
+import UserIcon from "../components/UserIcon";
 
 const Lobby = (): React.ReactElement => {
   const [_joinCode] = useAtom(joinCode);
@@ -37,14 +38,12 @@ const Lobby = (): React.ReactElement => {
           <List relaxed>
             {users.map((u) => {
               return (
-                <ListItem key={"user-" + u.id}>
-                  <ListIcon
-                    name="user circle"
-                    size="large"
-                    verticalAlign="middle"
-                  />
+                <ListItem className="user-list-item" key={"user-" + u.id}>
+                  <UserIcon user={u} />
                   <ListContent>
-                    <ListHeader>{u.name}</ListHeader>
+                    <ListHeader>
+                      <Username username={u.name} />
+                    </ListHeader>
                   </ListContent>
                 </ListItem>
               );

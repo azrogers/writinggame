@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { userImplState } from "../../../state/UserState";
 import type { WriteUserImplState } from "../ImplState";
-import { Button } from "semantic-ui-react";
+import { Button, Grid, GridColumn, GridRow } from "semantic-ui-react";
 import { gameUsers, startGameLeader } from "../../../state/GameState";
 import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import { useEffect } from "react";
@@ -24,6 +24,7 @@ const Lobby = (props: LobbyProps) => {
   if (_userImplState.user_type == "Leader") {
     startGameButton = (
       <Button
+        primary
         size="large"
         disabled={_users.length < 2}
         onClick={() => {
@@ -36,8 +37,14 @@ const Lobby = (props: LobbyProps) => {
 
   return (
     <div>
-      {startGameButton}
-      <p>Waiting for the game to start.</p>
+      <Grid centered>
+        <GridRow>
+          <GridColumn width="4" style={{ textAlign: "center" }}>
+            <p>{startGameButton}</p>
+            <p>Waiting for the game to start.</p>
+          </GridColumn>
+        </GridRow>
+      </Grid>
     </div>
   );
 };

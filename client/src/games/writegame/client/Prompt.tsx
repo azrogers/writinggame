@@ -8,7 +8,7 @@ import {
   submitPrompt,
 } from "../../../state/PromptState";
 import { useState } from "react";
-import { Button, Input } from "semantic-ui-react";
+import { Button, Form, TextArea } from "semantic-ui-react";
 
 interface PromptProps {
   sendJsonMessage: SendJsonMessage;
@@ -38,15 +38,26 @@ const Prompt = (props: PromptProps) => {
   let canSubmit = false;
   if (!_promptSubmitted && _promptType.type == "Text") {
     promptInput = (
-      <Input
-        type="text"
-        value={promptText}
-        maxLength={_promptType.maxLength}
-        placeholder={"Text"}
-        onChange={(e) => {
-          setPromptText(e.target.value);
-        }}
-      />
+      <Form
+        onSubmit={(e) => {
+          console.log(e);
+        }}>
+        <TextArea
+          value={promptText}
+          maxLength={_promptType.maxLength}
+          placeholder={"Text"}
+          onKeyDown={(e: any) => {
+            if (e.key == "Enter") {
+              submitPromptClick();
+              e.preventDefault();
+            }
+          }}
+          onChange={(e) => {
+            setPromptText(e.target.value);
+          }}
+          style={{ marginBottom: "5px" }}
+        />
+      </Form>
     );
     canSubmit =
       promptText.length >= _promptType.minLength &&
