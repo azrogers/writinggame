@@ -14,7 +14,6 @@ let token: string | null = null;
 
 export function getToken(): string | null {
   return import.meta.env.PROD ? localStorage.getItem("app:user_token") : token;
-  //return localStorage.getItem("app:user_token");
 }
 
 export function setToken(token_: string | null) {

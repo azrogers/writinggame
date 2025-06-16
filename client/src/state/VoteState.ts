@@ -35,12 +35,12 @@ export enum HostVoteState {
 
 export const hostVoteState = atom<HostVoteState>(HostVoteState.None);
 
-interface UserVote {
+export interface UserVote {
   option_id: string;
   value: number;
 }
 
-interface UserVotes {
+export interface UserVotes {
   user_id: string;
   votes: UserVote[];
 }

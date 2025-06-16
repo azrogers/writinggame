@@ -20,6 +20,8 @@ import GamePage from "./games/GamePage";
 import { developerModeEnabled } from "./dev/DeveloperMode";
 import DeveloperPage from "./dev/DeveloperPage";
 import { initPromptHandlers } from "./state/PromptState";
+import { TtsLoader } from "./data/TtsLoader";
+import { setDevState } from "./dev/DevStates";
 
 function App() {
   const [_endpointConfig] = useAtom(endpointConfig);
@@ -33,6 +35,8 @@ function App() {
 
   (window as any)["getWebSocket"] = getWebSocket;
   (window as any)["setToken"] = setToken;
+  (window as any)["tts"] = TtsLoader;
+  (window as any)["setDevState"] = setDevState;
 
   useEffect(() => {
     initUserHandlers();

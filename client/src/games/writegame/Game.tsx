@@ -127,7 +127,7 @@ const GamePage = (props: GamePageProps) => {
     }
   }
 
-  return <p>No page for current game state.</p>;
+  return <p>Look at the screen!</p>;
 };
 
 export default GamePage;

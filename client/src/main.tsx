@@ -4,7 +4,7 @@ import App from "./App.tsx";
 import { Provider, useAtom } from "jotai";
 import { Store } from "./state/Store.ts";
 import "semantic-ui-less/semantic.less";
-import "./App.css";
+import "./App.less";
 import { useAtomsDevtools } from "jotai-devtools";
 import { endpointConfig } from "./state/AppState.ts";
 import { EndpointConfigLoader } from "./Endpoints.ts";

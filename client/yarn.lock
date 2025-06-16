@@ -758,6 +758,11 @@
     "@types/react" "*"
     hoist-non-react-statics "^3.3.0"
 
+"@types/humanize-plus@^1.8.2":
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/@types/humanize-plus/-/humanize-plus-1.8.2.tgz#ce40ad11f4eeb0364f52c0ec5ef21b989369dd9b"
+  integrity sha512-uyFFCGYuqU/Cpr8h+iE2k0shDAnXltV0Pd/r6bmxFAvXVss2cvEiQqeZpwuX8BsAtWN0JTipeXrDxdHk4EEhPg==
+
 "@types/json-schema@^7.0.15":
   version "7.0.15"
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
@@ -1539,6 +1544,11 @@ hoist-non-react-statics@^3.3.0:
   integrity sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==
   dependencies:
     react-is "^16.7.0"
+
+humanize-plus@^1.8.2:
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/humanize-plus/-/humanize-plus-1.8.2.tgz#a65b34459ad6367adbb3707a82a3c9f916167030"
+  integrity sha512-jaLeQyyzjjINGv7O9JJegjsaUcWjSj/1dcXvLEgU3pGdqCdP1PiC/uwr+saJXhTNBHZtmKnmpXyazgh+eceRxA==
 
 iconv-lite@^0.6.3:
   version "0.6.3"

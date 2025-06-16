@@ -3,6 +3,7 @@ import { gameImplState, gameRoundCount } from "../../../state/GameState";
 import type { WriteGameImplState } from "../ImplState";
 import { Grid, GridColumn, Header } from "semantic-ui-react";
 import { hostGameTopic } from "../GameFlow";
+import { roundCount } from "../Config";
 
 interface WriteSentenceProps {
   timerSeconds: number;
@@ -84,7 +85,9 @@ const WriteSentence = (props: WriteSentenceProps) => {
           <Header size="large">{props.timerSeconds}</Header>
         </GridColumn>
         <GridColumn width={14}>
-          <Header size="small">Round {_roundCount}</Header>
+          <Header size="medium">
+            Round {_roundCount} of {roundCount}
+          </Header>
           {sentenceContent}
         </GridColumn>
       </Grid>

@@ -24,7 +24,7 @@ export class IconsManager {
   }
 
   static getImageUrl(id: number): string {
-    return `/img/icons/${id}.png`;
+    return `/img/icons/${id.toString().padStart(3, "0")}.png`;
   }
 
   static reset() {

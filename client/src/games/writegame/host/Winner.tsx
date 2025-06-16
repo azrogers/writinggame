@@ -1,20 +1,9 @@
 import { useAtom } from "jotai";
 import { hostUserScores } from "../GameFlow";
-import { Grid, GridColumn, Header } from "semantic-ui-react";
-import { gameUsers } from "../../../state/GameState";
-
-function indexToSize(index: number) {
-  switch (index) {
-    case 0:
-      return "huge";
-    case 1:
-      return "large";
-    case 2:
-      return "medium";
-    default:
-      return "small";
-  }
-}
+import { Grid, GridColumn, Header, Image } from "semantic-ui-react";
+import { gameUsers, type GameUserState } from "../../../state/GameState";
+import { formatScore } from "../../../lib/util";
+import { IconsManager } from "../../../data/IconsManager";
 
 interface WinnerProps {
   timerSeconds: number;
@@ -24,21 +13,19 @@ const Winner = (props: WinnerProps) => {
   const [_hostUserScores] = useAtom(hostUserScores);
   const [_users] = useAtom(gameUsers);
 
-  const userNameMap: { [userId: string]: string } = {};
+  const userMap: { [userId: string]: GameUserState } = {};
 
   _users.forEach((user) => {
-    userNameMap[user.id] = user.name || "";
+    userMap[user.id] = user;
   });
 
   const scoreUsers: {
-    userId: string;
-    name: string;
+    user: GameUserState;
     score: number;
   }[] = [];
   Object.keys(_hostUserScores).forEach((userId) => {
     scoreUsers.push({
-      userId,
-      name: userNameMap[userId],
+      user: userMap[userId],
       score: _hostUserScores[userId].score,
     });
   });
@@ -52,16 +39,33 @@ const Winner = (props: WinnerProps) => {
           <Header size="large">{props.timerSeconds}</Header>
         </GridColumn>
         <GridColumn width={14}>
-          <Header size="small">Game Over!</Header>
-          {scoreUsers.map((scoreUser, index) => {
-            const size = indexToSize(index);
-            return (
-              <div key={`user-${index}`}>
-                <Header size={size}>{scoreUser.name}</Header>
-                <Header size="tiny">Score: {scoreUser.score}</Header>
-              </div>
-            );
-          })}
+          <Header size="huge" style={{ textAlign: "center" }}>
+            Winner!
+          </Header>
+          <div className="winner-user-list">
+            {scoreUsers.map((scoreUser, index) => {
+              return (
+                <div
+                  className={
+                    "winner-user-item" + (index == 0 ? " winner" : " loser")
+                  }
+                  key={`user-${index}`}>
+                  <Image
+                    size={index == 0 ? "small" : "tiny"}
+                    src={IconsManager.getImageUrl(scoreUser.user.icon_id)}
+                  />
+                  <div className="user-info">
+                    <Header
+                      className="username"
+                      size={index == 0 ? "huge" : "medium"}>
+                      {scoreUser.user.name}
+                    </Header>
+                    <Header size="tiny">{formatScore(scoreUser.score)}</Header>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </GridColumn>
       </Grid>
     </div>

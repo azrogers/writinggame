@@ -1,0 +1,154 @@
+body {
+  background-image: url(/img/background.png);
+  background-size: 64px;
+  overflow: hidden;
+}
+
+#root {
+  margin-top: 20px;
+}
+
+.username {
+  font-weight: normal;
+  font-family: "Patrick Hand", cursive;
+}
+
+.user-list-item {
+  height: 35px;
+  line-height: 30px;
+  font-size: 24px;
+}
+
+.vote-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  .vote-option-host {
+    width: 45%;
+    min-height: 100px;
+    position: relative;
+
+    margin-left: 10px;
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid black;
+    background: white;
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+
+    .vote-option-padder {
+      height: 30px;
+      width: 100%;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .vote-display-single,
+    .vote-display-ranked {
+      position: absolute;
+      top: -15px;
+      right: 0;
+
+      img {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .vote-display-ranked {
+      padding-top: 2px;
+      padding-right: 2px;
+      div {
+        display: inline-block;
+      }
+
+      .vote-ranked-1,
+      .vote-ranked-2,
+      .vote-ranked-3 {
+        padding: 2px;
+        margin-left: 2px;
+
+        border-radius: 25px;
+      }
+
+      .vote-ranked-1 {
+        background: gold;
+        border: 1px solid darken(gold, 20%);
+      }
+
+      .vote-ranked-2 {
+        background: silver;
+        border: 1px solid darken(silver, 20%);
+      }
+
+      .vote-ranked-3 {
+        background: #ce8946;
+        border: 1px solid darken(#ce8946, 20%);
+      }
+    }
+  }
+}
+
+.score-users-list {
+  .score-users-list-item {
+    position: relative;
+    font-size: 24px;
+    margin-bottom: 10px;
+
+    .header {
+      font-size: 1em;
+    }
+
+    .score-added {
+      position: absolute;
+      right: -500px;
+      width: 500px;
+      text-align: left;
+      top: 0;
+      margin: 0;
+
+      color: green;
+    }
+  }
+}
+
+.winner-user-list {
+  text-align: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  .header {
+    margin: 0;
+  }
+
+  .winner-user-item {
+    margin-bottom: 10px;
+  }
+
+  .winner-user-item.winner {
+    font-size: 24px;
+  }
+
+  .winner-user-item.loser {
+    justify-content: center;
+    display: flex;
+
+    .user-info {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      margin-left: 20px;
+      font-size: 16px;
+    }
+  }
+}

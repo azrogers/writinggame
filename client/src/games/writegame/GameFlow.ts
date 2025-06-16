@@ -47,6 +47,7 @@ import {
 } from "../../state/GameState";
 import type { WriteGameImplState, WriteUserImplState } from "./ImplState";
 import { TtsLoader } from "../../data/TtsLoader";
+import { inDevState } from "../../dev/DeveloperMode";
 
 export enum HostUIState {
   None,
@@ -252,7 +253,7 @@ export function onTimerExpire(
   sendJsonMessage: SendJsonMessage,
   state: HostUIState
 ): boolean {
-  if (!Store.get(isHosting)) {
+  if (!Store.get(isHosting) || Store.get(inDevState)) {
     return false;
   }
   if (state == HostUIState.ChooseTopic) {

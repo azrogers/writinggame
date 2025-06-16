@@ -5,19 +5,11 @@ import {
   hostVoteState,
   voteOptions,
   voteTitle,
-  voteType,
   voteUserVotes,
 } from "../../../state/VoteState";
-import {
-  Grid,
-  GridColumn,
-  Header,
-  List,
-  ListContent,
-  ListHeader,
-  ListItem,
-} from "semantic-ui-react";
-import { gameUsers } from "../../../state/GameState";
+import { Grid, GridColumn, Header } from "semantic-ui-react";
+import { gameUsers, type GameUserState } from "../../../state/GameState";
+import HostVoteOptionComponent from "../components/VoteOption";
 
 interface VoteProps {
   sendJsonMessage: SendJsonMessage;
@@ -31,11 +23,10 @@ const Vote = (props: VoteProps) => {
   const [_hostVoteState] = useAtom(hostVoteState);
   const [_userVotes] = useAtom(voteUserVotes);
   const [_users] = useAtom(gameUsers);
-  const [_voteType] = useAtom(voteType);
 
   const votesPerOption: {
     [optionId: string]: {
-      userName: string;
+      user: GameUserState;
       score: number;
     }[];
   } = {};
@@ -46,25 +37,13 @@ const Vote = (props: VoteProps) => {
       userVote.votes.forEach((vote) => {
         const arr = votesPerOption[vote.option_id] || [];
         arr.push({
-          userName: userObj.name || "",
           score: vote.value,
+          user: userObj,
         });
         votesPerOption[vote.option_id] = arr;
       });
     });
   }
-
-  const formatVoteRow = (vote: { userName: string; score: number }) => {
-    if (_voteType == "Single") {
-      return <li key={`vote-${vote.userName}`}>{vote.userName}</li>;
-    }
-
-    return (
-      <li key={`vote-${vote.userName}-${vote.score}`}>
-        <strong>#{vote.score}</strong> - {vote.userName}
-      </li>
-    );
-  };
 
   const options = [..._options];
   if (_hostVoteState == HostVoteState.Finished) {
@@ -77,22 +56,17 @@ const Vote = (props: VoteProps) => {
         <GridColumn width={2}>
           <Header size="large">{props.timerSeconds}</Header>
         </GridColumn>
-        <GridColumn width={14}>
+        <GridColumn width={12}>
           <Header size="medium">{_voteTitle}</Header>
-          <List relaxed="very">
-            {options.map((option) => {
-              return (
-                <ListItem key={"option-" + option.id}>
-                  <ListContent>
-                    <ListHeader>{option.content.text}</ListHeader>
-                    <ul>
-                      {(votesPerOption[option.id] || []).map(formatVoteRow)}
-                    </ul>
-                  </ListContent>
-                </ListItem>
-              );
-            })}
-          </List>
+          <div className="vote-container">
+            {options.map((option) => (
+              <HostVoteOptionComponent
+                key={`option-${option.id}`}
+                option={option}
+                votes={votesPerOption[option.id] || []}
+              />
+            ))}
+          </div>
         </GridColumn>
       </Grid>
     </div>
