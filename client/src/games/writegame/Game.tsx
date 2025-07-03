@@ -32,6 +32,7 @@ import {
 import WriteSentence from "./host/WriteSentence";
 import Scoring from "./host/Scoring";
 import Winner from "./host/Winner";
+import Sound from "../../Sound";
 
 interface GamePageProps {
   sendJsonMessage: SendJsonMessage;
@@ -51,11 +52,23 @@ const GamePage = (props: GamePageProps) => {
 
   const { restart, totalSeconds, pause, isRunning } = useTimer({
     expiryTimestamp: new Date(),
-    autoStart: false,
-    onExpire: () => {
+		autoStart: false,
+		onExpire: () =>
+		{
       onTimerExpire(props.sendJsonMessage, _hostUiState);
     },
-  });
+	});
+	
+	useEffect(() =>
+	{
+		if (_isPromptActive || _isVoteActive)
+		{
+			if (totalSeconds > 0 && totalSeconds < 5)
+			{
+				Sound.sfxPlay("timer_tick");
+			}
+		}
+	}, [totalSeconds]);
 
   useEffect(() => {
     initWriteGameHandlers(props.sendJsonMessage);

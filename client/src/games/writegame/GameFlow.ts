@@ -15,6 +15,8 @@ import {
 import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import { Store } from "../../state/Store";
 import {
+	bronzeVoteScore,
+	goldVoteScore,
   roundCount,
   sentenceDisplayDuration,
   sentenceScoringDuration,
@@ -23,8 +25,10 @@ import {
   sentenceVoteEndDuration,
   sentenceWinnerDuration,
   sentenceWriteDuration,
+  silverVoteScore,
   topicVoteDuration,
   topicVoteEndDuration,
+	winnerBonusScore,
 } from "./Config";
 import { MessageDispatcher } from "../../MessageDispatcher";
 import { SentenceGenerator } from "../../data/SentenceGenerator";
@@ -48,6 +52,8 @@ import {
 import type { WriteGameImplState, WriteUserImplState } from "./ImplState";
 import { TtsLoader } from "../../data/TtsLoader";
 import { inDevState } from "../../dev/DeveloperMode";
+import Sound from "../../Sound";
+import { formatSentence } from "../../lib/util";
 
 export enum HostUIState {
   None,
@@ -64,6 +70,8 @@ export enum HostUIState {
 
 export const hostUiState = atom(HostUIState.None);
 export const hostGameTopic = atom<Topic | null>(null);
+
+export const winningSentenceUser = atom<string | null>(null);
 
 export interface HostUserScore {
   userId: string;
@@ -211,18 +219,24 @@ export function onUiStateChange(
     options.forEach((opt) => (optionsMap[opt.id] = opt.host_id));
     const scores = Store.get(hostUserScores);
     Store.get(voteUserVotes).forEach((userVote) => {
-      userVote.votes.forEach((vote) => {
-        const scoreObj = scores[optionsMap[vote.option_id]];
+			userVote.votes.forEach((vote) =>
+			{
+				const optionUserId = optionsMap[vote.option_id];
+        const scoreObj = scores[optionUserId];
         let score = 0;
         if (vote.value == 1) {
-          score += 1000;
+          score += goldVoteScore;
         } else if (vote.value == 2) {
-          score += 500;
+          score += silverVoteScore;
         } else if (vote.value == 3) {
-          score += 250;
+          score += bronzeVoteScore;
         }
         scoreObj.score += score;
-        scoreObj.scoreAdded = score;
+				scoreObj.scoreAdded = score;
+				if (optionUserId == Store.get(winningSentenceUser))
+				{
+					scoreObj.score += winnerBonusScore;
+				}
       });
     });
     Store.set(hostUserScores, scores);
@@ -257,7 +271,9 @@ export function onTimerExpire(
     return false;
   }
   if (state == HostUIState.ChooseTopic) {
-    if (Store.get(hostVoteState) == HostVoteState.Active) {
+		if (Store.get(hostVoteState) == HostVoteState.Active)
+		{
+			Sound.sfxPlay("timer_end");
       setTimeout(() => {
         endVote(sendJsonMessage, Store.get(voteId) || "");
       }, 3000);
@@ -288,12 +304,14 @@ export function onTimerExpire(
     }
   } else if (state == HostUIState.WriteSentence) {
     if (Store.get(hostPromptState) == HostPromptState.Active) {
+			Sound.sfxPlay("timer_end");
       setTimeout(() => {
         endPrompt(sendJsonMessage, Store.get(promptId) || "");
       }, 3000);
     }
   } else if (state == HostUIState.VoteSentence) {
     if (Store.get(hostVoteState) == HostVoteState.Active) {
+			Sound.sfxPlay("timer_end");
       setTimeout(() => {
         endVote(sendJsonMessage, Store.get(voteId) || "");
       }, 3000);
@@ -305,7 +323,8 @@ export function onTimerExpire(
         winningSentence.host_id,
         ", winning text: ",
         winningSentence.content.text
-      );
+			);
+			Store.set(winningSentenceUser, winningSentence.host_id);
       sendSentence(
         sendJsonMessage,
         winningSentence.content.text,
@@ -331,7 +350,8 @@ export function onTimerExpire(
       );
     }
   } else if (Store.get(hostUiState) == HostUIState.DisplayFinalSentences) {
-    Store.set(hostUiState, HostUIState.AwardWinner);
+		Store.set(hostUiState, HostUIState.AwardWinner);
+		Sound.sfxPlay("victory");
   } else if (Store.get(hostUiState) == HostUIState.AwardWinner) {
     Store.set(hostUiState, HostUIState.Ended);
   }
@@ -382,10 +402,9 @@ function sendSentence(
   sendJsonMessage: SendJsonMessage,
   sentence: string,
   authorId: string
-) {
-  if (!/[.,:!?]$/.test(sentence)) {
-    sentence = sentence + ".";
-  }
+)
+{
+	sentence = formatSentence(sentence);
   MessageDispatcher.sendMessage(sendJsonMessage, "wg/sentence", {
     sentence,
     sentence_author: authorId,

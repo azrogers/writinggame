@@ -38,3 +38,40 @@ export function lerp(a: number, b: number, t: number): number {
 export function formatScore(num: number): string {
   return Humanize.formatNumber(Math.floor(num), 0);
 }
+
+export function formatSentence(text: string): string
+{
+	text = text.trim();
+
+	let finalString = "";
+	let expectsCaps = true;
+
+	for (let i = 0; i < text.length; i++)
+	{
+		if (expectsCaps && text[i] != ' ')
+		{
+			finalString += text[i].toUpperCase();
+			expectsCaps = false;
+		}
+		else if (text[i] == "i" && (i == 0 || /\s/.test(text[i - 1])) && (i == text.length - 1 || /\s/.test(text[i + 1])))
+		{
+			finalString += "I";
+		}
+		else
+		{
+			finalString += text[i];
+		}
+
+		if (/[.!?]/.test(text[i]))
+		{
+			expectsCaps = true;
+		}
+	}
+	
+	if (!/[.,:!?]$/.test(text))
+	{
+		finalString += ".";
+	}
+	
+	return finalString;
+}

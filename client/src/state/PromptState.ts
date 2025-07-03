@@ -2,6 +2,8 @@ import { atom } from "jotai";
 import { MessageDispatcher } from "../MessageDispatcher";
 import { Store } from "./Store";
 import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
+import { isHosting } from "./AppState";
+import Sound from "../Sound";
 
 export type PromptType = {
   type: "Text";
@@ -74,6 +76,10 @@ export function initPromptHandlers() {
     "prompt/submit",
     (payload) => {
       Store.set(promptUserResponses, payload.responses);
+			if (Store.get(isHosting))
+			{
+				Sound.sfxPlay("submit");
+			}
     }
   );
 

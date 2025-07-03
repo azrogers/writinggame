@@ -23,6 +23,7 @@ import { initPromptHandlers } from "./state/PromptState";
 import { TtsLoader } from "./data/TtsLoader";
 import { setDevState } from "./dev/DevStates";
 import { Store } from "./state/Store";
+import { formatSentence } from "./lib/util";
 
 function App() {
   const [_endpointConfig] = useAtom(endpointConfig);
@@ -44,7 +45,8 @@ function App() {
   (window as any)["setToken"] = setToken;
   (window as any)["tts"] = TtsLoader;
   (window as any)["setDevState"] = setDevState;
-  (window as any)["Store"] = Store;
+	(window as any)["Store"] = Store;
+	(window as any)["formatSentence"] = formatSentence;
 
   useEffect(() => {
     initUserHandlers();

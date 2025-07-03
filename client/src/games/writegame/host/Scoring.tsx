@@ -11,6 +11,7 @@ import Username from "../components/Username";
 import { useEffect, useState } from "react";
 import { formatScore, lerp } from "../../../lib/util";
 import { roundCount } from "../Config";
+import Sound from "../../../Sound";
 
 interface ScoringProps {
   timerSeconds: number;
@@ -37,7 +38,8 @@ const Scoring = (props: ScoringProps) => {
     setLerpAmount(0);
     setIsLerping(false);
     setTimeout(() => {
-      setIsLerping(true);
+			setIsLerping(true);
+			Sound.sfxPlay("score");
     }, SCORE_LERP_WAIT * 1000);
   }, [_hostUserScores]);
 

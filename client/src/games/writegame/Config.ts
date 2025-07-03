@@ -9,3 +9,8 @@ export const sentenceTtsWaitDuration = 5.0;
 export const sentenceWinnerDuration = 20.0;
 
 export const roundCount = 5;
+
+export const goldVoteScore = 1000;
+export const silverVoteScore = 500;
+export const bronzeVoteScore = 250;
+export const winnerBonusScore = 1000;

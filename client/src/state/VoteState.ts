@@ -2,6 +2,8 @@ import { atom } from "jotai";
 import { MessageDispatcher } from "../MessageDispatcher";
 import { Store } from "./Store";
 import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
+import { isHosting } from "./AppState";
+import Sound from "../Sound";
 
 export type VoteType = "Single" | "Ranked";
 
@@ -92,7 +94,11 @@ export function initVoteHandlers() {
   MessageDispatcher.registerHandler<VoteCastResponse>(
     "vote/cast",
     (payload) => {
-      Store.set(voteUserVotes, payload.votes);
+			Store.set(voteUserVotes, payload.votes);
+			if (Store.get(isHosting))
+			{
+				Sound.sfxPlay("submit");
+			}
     }
   );
 

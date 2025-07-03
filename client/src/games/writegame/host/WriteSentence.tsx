@@ -4,6 +4,7 @@ import type { WriteGameImplState } from "../ImplState";
 import { Grid, GridColumn, Header } from "semantic-ui-react";
 import { hostGameTopic } from "../GameFlow";
 import { roundCount } from "../Config";
+import Humanize from "humanize-plus";
 
 interface WriteSentenceProps {
   timerSeconds: number;
@@ -40,7 +41,7 @@ const WriteSentence = (props: WriteSentenceProps) => {
     sentenceContent = (
       <>
         <Header size="tiny">
-          {implState.sentences.length > 0 ? implState.sentences[0].text : ""}
+          {implState.sentences.length > 0 ? Humanize.titleCase(implState.sentences[0].text) : ""}
         </Header>
         <p>
           {implState.sentences.slice(1).map((s, index) => {

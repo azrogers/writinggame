@@ -5,6 +5,7 @@ import { Store } from "./Store";
 import { getToken, setToken, userId, userImplState } from "./UserState";
 import { GlobalGameState, globalGameState, isHosting } from "./AppState";
 import { IconsManager } from "../data/IconsManager";
+import Sound from "../Sound";
 
 export type GameType = "WriteGame";
 export type GameMode = "Normal";
@@ -97,7 +98,10 @@ export function initGameHandlers() {
       Store.set(gameImplState, payload.impl_state);
       Store.set(gameMode, payload.game_mode);
       Store.set(gameType, payload.game_type);
-      Store.set(gameRoundCount, 1);
+			Store.set(gameRoundCount, 1);
+			
+			Sound.initialize();
+			Sound.musicPlay();
     }
   );
 
@@ -145,7 +149,13 @@ export function initGameHandlers() {
     (payload) => {
       payload.users.forEach((u) => {
         u.icon_id = IconsManager.getOrAssignIcon(u.id);
-      });
+			});
+			
+			if (payload.users.length > Store.get(gameUsers).length)
+			{
+				Sound.sfxPlay("submit");
+			}
+
       Store.set(gameUsers, payload.users);
       for (let i = 0; i < payload.users.length; i++) {
         if (payload.users[i].id == Store.get(userId)) {

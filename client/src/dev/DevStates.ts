@@ -5,6 +5,7 @@ import {
   hostUserScores,
   type HostUserScore,
 } from "../games/writegame/GameFlow";
+import Sound from "../Sound";
 import { GlobalGameState, globalGameState, isHosting } from "../state/AppState";
 import {
   gameRoundCount,
@@ -31,7 +32,10 @@ import { inDevState } from "./DeveloperMode";
 
 export type DevStates = "vote_client" | "vote_host" | "scoring" | "winner";
 
-export function setDevState(state: DevStates) {
+export function setDevState(state: DevStates)
+{
+	Sound.initialize();
+
   Store.set(inDevState, true);
   IconsManager.reset();
   Store.set(gameType, "WriteGame");
@@ -122,5 +126,11 @@ export function setDevState(state: DevStates) {
       };
     });
     Store.set(hostUserScores, scores);
-  }
+	}
+	else if (state == "paragraph")
+	{
+    Store.set(globalGameState, GlobalGameState.Game);
+    Store.set(isHosting, state == "vote_host");
+    Store.set(hostUiState, HostUIState.VoteSentence);
+	}
 }
