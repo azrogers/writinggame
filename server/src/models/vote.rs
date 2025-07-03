@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use dashmap::DashMap;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -55,16 +57,22 @@ pub struct Vote {
 
 impl Vote {
   pub fn to_client_response(&self) -> serde_json::Value {
-    let mut options = Vec::new();
+    let mut options = Vec::with_capacity(self.options.len());
     for option in &self.options {
       options.push(option.to_client_response());
+    }
+
+    let mut user_vote_counts = HashMap::new();
+    for item in &self.user_votes {
+      user_vote_counts.insert(*item.key(), item.value().len());
     }
 
     json!({
       "id": self.id,
       "title": self.title,
       "vote_type": self.vote_type,
-      "options": options
+      "options": options,
+      "user_vote_counts": user_vote_counts
     })
   }
 }

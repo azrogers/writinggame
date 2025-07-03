@@ -22,12 +22,19 @@ import DeveloperPage from "./dev/DeveloperPage";
 import { initPromptHandlers } from "./state/PromptState";
 import { TtsLoader } from "./data/TtsLoader";
 import { setDevState } from "./dev/DevStates";
+import { Store } from "./state/Store";
 
 function App() {
   const [_endpointConfig] = useAtom(endpointConfig);
   const { lastMessage, readyState, sendJsonMessage, getWebSocket } =
     useWebSocket(_endpointConfig?.websocket_url || "", {
-      shouldReconnect: () => true,
+			shouldReconnect: () => true,
+			heartbeat: {
+				message: JSON.stringify({ action: "system/ping", payload: null }),
+				returnMessage: JSON.stringify({ action: "system/pong", status: "success", payload: null }),
+				interval: 25000,
+				timeout: 60000
+			}
     });
   const [_connectionState, setConnectionState] = useAtom(connectionState);
   const [_globalGameState] = useAtom(globalGameState);
@@ -37,6 +44,7 @@ function App() {
   (window as any)["setToken"] = setToken;
   (window as any)["tts"] = TtsLoader;
   (window as any)["setDevState"] = setDevState;
+  (window as any)["Store"] = Store;
 
   useEffect(() => {
     initUserHandlers();

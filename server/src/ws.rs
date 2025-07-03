@@ -159,6 +159,13 @@ impl SocketManager {
     let msg = serde_json::from_str::<SocketMessage>(msg)
       .map_err(|err| SocketError::Parse(err.to_string().into()))?;
 
+    if msg.action == "system/ping" {
+      return Ok(Some((
+        "system/pong".to_string(),
+        Box::new(serde_json::Value::Null),
+      )));
+    }
+
     // game/host - creates a new game and host user
     if msg.action == "game/host" {
       return GameHostAction::on_receive(
@@ -216,6 +223,7 @@ impl SocketManager {
         .get_mut(&token_contents.game_id)
       {
         sessions.remove(&user_session_id);
+        sessions.insert(session_id);
       }
       if let Some(mut session) = self.database.sessions.get_mut(&session_id) {
         session.game_id = Some(token_contents.game_id);
@@ -315,13 +323,14 @@ impl SocketManager {
     return GameManager::on_action(self, game, user, &msg.action, msg.payload).await;
   }
 
-  pub async fn broadcast_to_game(&self, game: &Game, action: String, msg: serde_json::Value) {
+  pub fn broadcast_to_game(&self, game: &Game, action: String, msg: serde_json::Value) {
     let message = SocketStateMessage {
       action,
       payload: msg,
     };
     let response = Message::text(serde_json::to_string(&message).unwrap());
     if let Some(session_ids) = self.database.game_to_sessions.get(&game.id) {
+      info!("sending message to {} sessions", session_ids.len());
       for session_id in session_ids.iter() {
         if let Some(session) = self.database.sessions.get(session_id) {
           session.tx.send(response.clone()).unwrap_or_else(|e| {
@@ -331,10 +340,15 @@ impl SocketManager {
           warn!("Found session_id {session_id} but no session found?");
         }
       }
+    } else {
+      warn!(
+        "Tried to send message to game {} but no sessions found?",
+        game.id
+      );
     }
   }
 
-  pub async fn send_to_user(&self, user_id: Uuid, action: String, msg: serde_json::Value) {
+  pub fn send_to_user(&self, user_id: Uuid, action: String, msg: serde_json::Value) {
     let message = SocketStateMessage {
       action,
       payload: msg,

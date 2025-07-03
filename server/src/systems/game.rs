@@ -107,13 +107,11 @@ impl GameStartAction {
     let mut game = game.write().await;
     game.game_state = GameState::Playing;
 
-    socket_manager
-      .broadcast_to_game(
-        &game,
-        "game/state".to_owned(),
-        serde_json::to_value(game.to_state_update()).unwrap(),
-      )
-      .await;
+    socket_manager.broadcast_to_game(
+      &game,
+      "game/state".to_owned(),
+      serde_json::to_value(game.to_state_update()).unwrap(),
+    );
 
     Ok(None)
   }

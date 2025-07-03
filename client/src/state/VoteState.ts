@@ -46,12 +46,14 @@ export interface UserVotes {
 }
 
 export const voteUserVotes = atom<UserVotes[]>([]);
+export const voteUserVoteCounts = atom<{ [id: string]: number }>({});
 
 interface VoteStartResponse {
   id: string;
   title: string;
   vote_type: VoteType;
   options: VoteOption[];
+  user_vote_counts: { [id: string]: number };
 }
 
 interface VoteCastResponse {
@@ -83,6 +85,7 @@ export function initVoteHandlers() {
       Store.set(voteUserVotes, []);
       Store.set(isVoteActive, true);
       Store.set(hostVoteState, HostVoteState.None);
+      Store.set(voteUserVoteCounts, payload.user_vote_counts);
     }
   );
 

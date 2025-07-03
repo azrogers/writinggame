@@ -86,9 +86,7 @@ impl VoteStartAction {
       .insert(game.id, vote.id);
     socket_manager.database.votes.insert(vote.id, vote);
 
-    socket_manager
-      .broadcast_to_game(&game, "vote/start".to_string(), response)
-      .await;
+    socket_manager.broadcast_to_game(&game, "vote/start".to_string(), response);
 
     Ok(None)
   }
@@ -172,9 +170,7 @@ impl VoteCastAction {
       "votes": votes.collect_vec()
     });
 
-    socket_manager
-      .send_to_user(game.host_user_id, "vote/cast".to_string(), message)
-      .await;
+    socket_manager.send_to_user(game.host_user_id, "vote/cast".to_string(), message);
 
     Ok(None)
   }
@@ -246,12 +242,8 @@ impl VoteEndAction {
 
     let game = game.read().await;
     socket_manager.database.game_to_vote.remove(&game.id);
-    socket_manager
-      .broadcast_to_game(&game, "vote/end".to_string(), serde_json::Value::Null)
-      .await;
-    socket_manager
-      .send_to_user(game.host_user_id, "vote/end".to_string(), message)
-      .await;
+    socket_manager.broadcast_to_game(&game, "vote/end".to_string(), serde_json::Value::Null);
+    socket_manager.send_to_user(game.host_user_id, "vote/end".to_string(), message);
 
     Ok(None)
   }

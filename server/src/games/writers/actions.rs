@@ -47,13 +47,11 @@ impl LeaderStartGameAction {
       ));
     }
 
-    socket_manager
-      .send_to_user(
-        game.host_user_id,
-        "wg/leader_start_game".to_owned(),
-        serde_json::Value::Null,
-      )
-      .await;
+    socket_manager.send_to_user(
+      game.host_user_id,
+      "wg/leader_start_game".to_owned(),
+      serde_json::Value::Null,
+    );
 
     Ok(None)
   }
@@ -107,13 +105,11 @@ impl SentenceAction {
       text: self.sentence,
     });
 
-    socket_manager
-      .broadcast_to_game(
-        &game,
-        "game/state".to_string(),
-        serde_json::to_value(game.to_state_update()).unwrap(),
-      )
-      .await;
+    socket_manager.broadcast_to_game(
+      &game,
+      "game/state".to_string(),
+      serde_json::to_value(game.to_state_update()).unwrap(),
+    );
 
     Ok(Some((
       "wg/sentence".to_string(),

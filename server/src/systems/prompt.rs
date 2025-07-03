@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use dashmap::DashMap;
 use itertools::Itertools;
+use log::info;
 use serde::Deserialize;
 use serde_json::json;
 use tokio::sync::RwLock;
@@ -62,9 +63,7 @@ impl PromptStartAction {
       .insert(game.id, prompt.id);
     socket_manager.database.prompts.insert(prompt.id, prompt);
 
-    socket_manager
-      .broadcast_to_game(&game, "prompt/start".to_string(), response)
-      .await;
+    socket_manager.broadcast_to_game(&game, "prompt/start".to_string(), response);
 
     Ok(None)
   }
@@ -137,9 +136,7 @@ impl PromptSubmitAction {
       "responses": responses.collect_vec()
     });
 
-    socket_manager
-      .send_to_user(game.host_user_id, "prompt/submit".to_string(), message)
-      .await;
+    socket_manager.send_to_user(game.host_user_id, "prompt/submit".to_string(), message);
 
     Ok(None)
   }
@@ -180,12 +177,8 @@ impl PromptEndAction {
 
     let game = game.read().await;
     socket_manager.database.game_to_prompt.remove(&game.id);
-    socket_manager
-      .broadcast_to_game(&game, "prompt/end".to_string(), serde_json::Value::Null)
-      .await;
-    socket_manager
-      .send_to_user(game.host_user_id, "prompt/end".to_string(), message)
-      .await;
+    socket_manager.broadcast_to_game(&game, "prompt/end".to_string(), serde_json::Value::Null);
+    socket_manager.send_to_user(game.host_user_id, "prompt/end".to_string(), message);
 
     Ok(None)
   }

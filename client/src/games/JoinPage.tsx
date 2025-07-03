@@ -51,7 +51,7 @@ const JoinPage = (props: JoinPageProps): React.ReactElement => {
 
   return (
     <>
-      <Header size="huge">Write Warz</Header>
+      <Header size="huge">Writers Block</Header>
       <Formik
         initialValues={{
           joinCode: userJoinInfo?.code ?? "",

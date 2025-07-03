@@ -1,0 +1,125 @@
+2025-07-02T20:14:58.369863500-04:00 INFO warp::server - Server::run; addr=0.0.0.0:3030
+2025-07-02T20:14:58.370581400-04:00 INFO warp::server - listening on http://0.0.0.0:3030
+2025-07-02T20:15:27.967340400-04:00 DEBUG hyper::proto::h1::io - parsed 17 headers
+2025-07-02T20:15:27.967708100-04:00 DEBUG hyper::proto::h1::conn - incoming body is empty
+2025-07-02T20:15:27.974503800-04:00 DEBUG hyper::proto::h1::io - flushed 166 bytes
+2025-07-02T20:15:27.975933600-04:00 INFO writinggame_server::ws - user connected: 22f8acaa-3b53-4872-b141-3a38e9cc04e4
+2025-07-02T20:15:27.981624700-04:00 DEBUG writinggame_server::ws - message received: {"action":"user/check_game","payload":{"join_code":"YSWLK","token":null},"token":null}
+2025-07-02T20:15:27.983538-04:00 DEBUG writinggame_server::ws - sending message Text("{\"action\":\"user/check_game\",\"status\":\"success\",\"payload\":null}")
+2025-07-02T20:18:48.290647200-04:00 DEBUG hyper::proto::h1::io - parsed 12 headers
+2025-07-02T20:18:48.290829100-04:00 DEBUG hyper::proto::h1::conn - incoming body is empty
+2025-07-02T20:18:48.291211500-04:00 DEBUG hyper::proto::h1::io - flushed 166 bytes
+2025-07-02T20:18:48.291434600-04:00 INFO writinggame_server::ws - user connected: a76f8ae8-4618-48da-87af-de4d4fd2bc5a
+2025-07-02T20:18:48.295503300-04:00 DEBUG writinggame_server::ws - message received: {"action":"user/check_game","payload":{"join_code":"GMFQA","token":null},"token":null}
+2025-07-02T20:18:48.295830-04:00 DEBUG writinggame_server::ws - sending message Text("{\"action\":\"user/check_game\",\"status\":\"success\",\"payload\":null}")
+2025-07-02T20:23:58.085846600-04:00 DEBUG tungstenite::protocol - Received close frame: Some(CloseFrame { code: Away, reason: "" })
+2025-07-02T20:23:58.086501400-04:00 DEBUG tungstenite::protocol - Replying to close with Frame { header: FrameHeader { is_final: true, rsv1: false, rsv2: false, rsv3: false, opcode: Control(Close), mask: None }, payload: [3, 233] }
+2025-07-02T20:23:58.086862300-04:00 INFO writinggame_server::ws - user disconnected: a76f8ae8-4618-48da-87af-de4d4fd2bc5a
+2025-07-02T20:23:58.087161400-04:00 DEBUG writinggame_server::ws - sending message Text("{\"status\":\"error\",\"error\":{\"type\":\"Parse\",\"message\":\"message contents could not be obtained\"},\"display_text\":\"Server encountered an error while trying to parse the message\"}")
+2025-07-02T20:23:58.087454900-04:00 DEBUG tokio_tungstenite - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:23:58.087743400-04:00 DEBUG warp::filters::ws - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:23:58.087902300-04:00 ERROR writinggame_server::ws - websocket send error: Trying to work with closed connection
+2025-07-02T20:26:17.464465500-04:00 DEBUG tungstenite::protocol - Received close frame: Some(CloseFrame { code: Away, reason: "" })
+2025-07-02T20:26:17.464661500-04:00 DEBUG tungstenite::protocol - Replying to close with Frame { header: FrameHeader { is_final: true, rsv1: false, rsv2: false, rsv3: false, opcode: Control(Close), mask: None }, payload: [3, 233] }
+2025-07-02T20:26:17.464935200-04:00 INFO writinggame_server::ws - user disconnected: 22f8acaa-3b53-4872-b141-3a38e9cc04e4
+2025-07-02T20:26:17.465195-04:00 DEBUG writinggame_server::ws - sending message Text("{\"status\":\"error\",\"error\":{\"type\":\"Parse\",\"message\":\"message contents could not be obtained\"},\"display_text\":\"Server encountered an error while trying to parse the message\"}")
+2025-07-02T20:26:17.465354800-04:00 DEBUG tokio_tungstenite - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:26:17.465498100-04:00 DEBUG warp::filters::ws - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:26:17.465624300-04:00 ERROR writinggame_server::ws - websocket send error: Trying to work with closed connection
+2025-07-02T20:28:11.170269500-04:00 INFO warp::server - Server::run; addr=0.0.0.0:3030
+2025-07-02T20:28:11.170504600-04:00 INFO warp::server - listening on http://0.0.0.0:3030
+2025-07-02T20:28:23.056458600-04:00 DEBUG hyper::proto::h1::io - parsed 17 headers
+2025-07-02T20:28:23.056641400-04:00 DEBUG hyper::proto::h1::conn - incoming body is empty
+2025-07-02T20:28:23.057463400-04:00 DEBUG hyper::proto::h1::io - flushed 166 bytes
+2025-07-02T20:28:23.057846500-04:00 INFO writinggame_server::ws - user connected: b8f081a9-c49b-40b4-a841-01f2923e9628
+2025-07-02T20:28:23.066945800-04:00 DEBUG writinggame_server::ws - message received: {"action":"user/check_game","payload":{"join_code":"YSWLK","token":null},"token":null}
+2025-07-02T20:28:23.067424300-04:00 DEBUG writinggame_server::ws - sending message Text("{\"action\":\"user/check_game\",\"status\":\"success\",\"payload\":null}")
+2025-07-02T20:28:26.685499500-04:00 DEBUG tungstenite::protocol - Received close frame: Some(CloseFrame { code: Away, reason: "" })
+2025-07-02T20:28:26.685804600-04:00 DEBUG tungstenite::protocol - Replying to close with Frame { header: FrameHeader { is_final: true, rsv1: false, rsv2: false, rsv3: false, opcode: Control(Close), mask: None }, payload: [3, 233] }
+2025-07-02T20:28:26.686109700-04:00 INFO writinggame_server::ws - user disconnected: b8f081a9-c49b-40b4-a841-01f2923e9628
+2025-07-02T20:28:26.686433300-04:00 DEBUG writinggame_server::ws - sending message Text("{\"status\":\"error\",\"error\":{\"type\":\"Parse\",\"message\":\"message contents could not be obtained\"},\"display_text\":\"Server encountered an error while trying to parse the message\"}")
+2025-07-02T20:28:26.686627100-04:00 DEBUG tokio_tungstenite - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:28:26.686822700-04:00 DEBUG warp::filters::ws - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:28:26.686999300-04:00 ERROR writinggame_server::ws - websocket send error: Trying to work with closed connection
+2025-07-02T20:28:35.328658300-04:00 DEBUG hyper::proto::h1::io - parsed 12 headers
+2025-07-02T20:28:35.328805800-04:00 DEBUG hyper::proto::h1::conn - incoming body is empty
+2025-07-02T20:28:35.329134900-04:00 DEBUG hyper::proto::h1::io - flushed 166 bytes
+2025-07-02T20:28:35.329319800-04:00 INFO writinggame_server::ws - user connected: f7f5e0a5-7c50-4aeb-8be7-651618e838d4
+2025-07-02T20:28:35.332927600-04:00 DEBUG writinggame_server::ws - message received: {"action":"user/check_game","payload":{"join_code":"GMFQA","token":null},"token":null}
+2025-07-02T20:28:35.333193100-04:00 DEBUG writinggame_server::ws - sending message Text("{\"action\":\"user/check_game\",\"status\":\"success\",\"payload\":null}")
+2025-07-02T20:28:42.526423900-04:00 DEBUG tungstenite::protocol - Received close frame: Some(CloseFrame { code: Away, reason: "" })
+2025-07-02T20:28:42.526655200-04:00 DEBUG tungstenite::protocol - Replying to close with Frame { header: FrameHeader { is_final: true, rsv1: false, rsv2: false, rsv3: false, opcode: Control(Close), mask: None }, payload: [3, 233] }
+2025-07-02T20:28:42.526985100-04:00 INFO writinggame_server::ws - user disconnected: f7f5e0a5-7c50-4aeb-8be7-651618e838d4
+2025-07-02T20:28:42.527257400-04:00 DEBUG writinggame_server::ws - sending message Text("{\"status\":\"error\",\"error\":{\"type\":\"Parse\",\"message\":\"message contents could not be obtained\"},\"display_text\":\"Server encountered an error while trying to parse the message\"}")
+2025-07-02T20:28:42.527416200-04:00 DEBUG tokio_tungstenite - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:28:42.527575700-04:00 DEBUG warp::filters::ws - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:28:42.527729800-04:00 ERROR writinggame_server::ws - websocket send error: Trying to work with closed connection
+2025-07-02T20:28:43.382522300-04:00 DEBUG hyper::proto::h1::io - parsed 12 headers
+2025-07-02T20:28:43.382669300-04:00 DEBUG hyper::proto::h1::conn - incoming body is empty
+2025-07-02T20:28:43.383023200-04:00 DEBUG hyper::proto::h1::io - flushed 166 bytes
+2025-07-02T20:28:43.383221100-04:00 INFO writinggame_server::ws - user connected: d64b88ce-f7d3-4d14-81f1-a3ef2d078224
+2025-07-02T20:28:43.387841500-04:00 DEBUG writinggame_server::ws - message received: {"action":"user/check_game","payload":{"join_code":"GMFQA","token":null},"token":null}
+2025-07-02T20:28:43.388270700-04:00 DEBUG writinggame_server::ws - sending message Text("{\"action\":\"user/check_game\",\"status\":\"success\",\"payload\":null}")
+2025-07-02T20:29:08.399926300-04:00 DEBUG writinggame_server::ws - message received: {"type":"system/ping"}
+2025-07-02T20:29:08.400567500-04:00 DEBUG writinggame_server::ws - sending message Text("{\"status\":\"error\",\"error\":{\"type\":\"Parse\",\"message\":\"missing field `action` at line 1 column 22\"},\"display_text\":\"Server encountered an error while trying to parse the message\"}")
+2025-07-02T20:29:34.374874900-04:00 DEBUG writinggame_server::ws - message received: {"type":"system/ping"}
+2025-07-02T20:29:34.375226600-04:00 DEBUG writinggame_server::ws - sending message Text("{\"status\":\"error\",\"error\":{\"type\":\"Parse\",\"message\":\"missing field `action` at line 1 column 22\"},\"display_text\":\"Server encountered an error while trying to parse the message\"}")
+2025-07-02T20:29:59.377226200-04:00 DEBUG writinggame_server::ws - message received: {"type":"system/ping"}
+2025-07-02T20:29:59.377537-04:00 DEBUG writinggame_server::ws - sending message Text("{\"status\":\"error\",\"error\":{\"type\":\"Parse\",\"message\":\"missing field `action` at line 1 column 22\"},\"display_text\":\"Server encountered an error while trying to parse the message\"}")
+2025-07-02T20:30:03.379971-04:00 DEBUG tungstenite::protocol - Received close frame: None
+2025-07-02T20:30:03.380184900-04:00 DEBUG tungstenite::protocol - Replying to close with Frame { header: FrameHeader { is_final: true, rsv1: false, rsv2: false, rsv3: false, opcode: Control(Close), mask: None }, payload: [] }
+2025-07-02T20:30:03.380462-04:00 INFO writinggame_server::ws - user disconnected: d64b88ce-f7d3-4d14-81f1-a3ef2d078224
+2025-07-02T20:30:03.380668200-04:00 DEBUG writinggame_server::ws - sending message Text("{\"status\":\"error\",\"error\":{\"type\":\"Parse\",\"message\":\"message contents could not be obtained\"},\"display_text\":\"Server encountered an error while trying to parse the message\"}")
+2025-07-02T20:30:03.380785700-04:00 DEBUG tokio_tungstenite - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:30:03.380901200-04:00 DEBUG warp::filters::ws - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:30:03.381025400-04:00 ERROR writinggame_server::ws - websocket send error: Trying to work with closed connection
+2025-07-02T20:30:03.696909700-04:00 DEBUG hyper::proto::h1::io - parsed 12 headers
+2025-07-02T20:30:03.697071600-04:00 DEBUG hyper::proto::h1::conn - incoming body is empty
+2025-07-02T20:30:03.697439100-04:00 DEBUG hyper::proto::h1::io - flushed 166 bytes
+2025-07-02T20:30:03.697635300-04:00 INFO writinggame_server::ws - user connected: 29fc5e0c-9144-41e9-8b74-416ba79cf6bb
+2025-07-02T20:31:37.668800700-04:00 INFO warp::server - Server::run; addr=0.0.0.0:3030
+2025-07-02T20:31:37.668986400-04:00 INFO warp::server - listening on http://0.0.0.0:3030
+2025-07-02T20:31:39.690212400-04:00 DEBUG hyper::proto::h1::io - parsed 12 headers
+2025-07-02T20:31:39.690390300-04:00 DEBUG hyper::proto::h1::conn - incoming body is empty
+2025-07-02T20:31:39.691332400-04:00 DEBUG hyper::proto::h1::io - flushed 166 bytes
+2025-07-02T20:31:39.691722200-04:00 INFO writinggame_server::ws - user connected: 5c261e7a-5ffc-4dbb-887a-a6a5ccf0a978
+2025-07-02T20:31:42.383043900-04:00 DEBUG tungstenite::protocol - Received close frame: Some(CloseFrame { code: Away, reason: "" })
+2025-07-02T20:31:42.383367100-04:00 DEBUG tungstenite::protocol - Replying to close with Frame { header: FrameHeader { is_final: true, rsv1: false, rsv2: false, rsv3: false, opcode: Control(Close), mask: None }, payload: [3, 233] }
+2025-07-02T20:31:42.383846400-04:00 INFO writinggame_server::ws - user disconnected: 5c261e7a-5ffc-4dbb-887a-a6a5ccf0a978
+2025-07-02T20:31:42.384212400-04:00 DEBUG writinggame_server::ws - sending message Text("{\"status\":\"error\",\"error\":{\"type\":\"Parse\",\"message\":\"message contents could not be obtained\"},\"display_text\":\"Server encountered an error while trying to parse the message\"}")
+2025-07-02T20:31:42.384396600-04:00 DEBUG tokio_tungstenite - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:31:42.384532400-04:00 DEBUG warp::filters::ws - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:31:42.384674900-04:00 ERROR writinggame_server::ws - websocket send error: Trying to work with closed connection
+2025-07-02T20:31:43.234761600-04:00 DEBUG hyper::proto::h1::io - parsed 12 headers
+2025-07-02T20:31:43.234888900-04:00 DEBUG hyper::proto::h1::conn - incoming body is empty
+2025-07-02T20:31:43.235214500-04:00 DEBUG hyper::proto::h1::io - flushed 166 bytes
+2025-07-02T20:31:43.235419500-04:00 INFO writinggame_server::ws - user connected: 73949afe-6d4a-4f66-bc02-75f6da67d148
+2025-07-02T20:31:43.240670900-04:00 DEBUG writinggame_server::ws - message received: {"action":"user/check_game","payload":{"join_code":"GMFQA","token":null},"token":null}
+2025-07-02T20:31:43.241140300-04:00 DEBUG writinggame_server::ws - sending message Text("{\"action\":\"user/check_game\",\"status\":\"success\",\"payload\":null}")
+2025-07-02T20:32:08.249585-04:00 DEBUG writinggame_server::ws - message received: {"action":"system/ping","payload":null}
+2025-07-02T20:32:08.249872900-04:00 DEBUG writinggame_server::ws - sending message Text("{\"action\":\"system/pong\",\"status\":\"success\",\"payload\":null}")
+2025-07-02T20:32:29.332120-04:00 INFO warp::server - Server::run; addr=0.0.0.0:3030
+2025-07-02T20:32:29.332403700-04:00 INFO warp::server - listening on http://0.0.0.0:3030
+2025-07-02T20:32:29.714444100-04:00 DEBUG hyper::proto::h1::io - parsed 12 headers
+2025-07-02T20:32:29.714635100-04:00 DEBUG hyper::proto::h1::conn - incoming body is empty
+2025-07-02T20:32:29.715225-04:00 DEBUG hyper::proto::h1::io - flushed 166 bytes
+2025-07-02T20:32:29.715528900-04:00 INFO writinggame_server::ws - user connected: b3168fd8-7738-4957-97bf-be1537a9ec8a
+2025-07-02T20:32:31.747758400-04:00 DEBUG tungstenite::protocol - Received close frame: Some(CloseFrame { code: Away, reason: "" })
+2025-07-02T20:32:31.747989400-04:00 DEBUG tungstenite::protocol - Replying to close with Frame { header: FrameHeader { is_final: true, rsv1: false, rsv2: false, rsv3: false, opcode: Control(Close), mask: None }, payload: [3, 233] }
+2025-07-02T20:32:31.748271500-04:00 INFO writinggame_server::ws - user disconnected: b3168fd8-7738-4957-97bf-be1537a9ec8a
+2025-07-02T20:32:31.748476800-04:00 DEBUG writinggame_server::ws - sending message Text("{\"status\":\"error\",\"error\":{\"type\":\"Parse\",\"message\":\"message contents could not be obtained\"},\"display_text\":\"Server encountered an error while trying to parse the message\"}")
+2025-07-02T20:32:31.748581400-04:00 DEBUG tokio_tungstenite - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:32:31.748714100-04:00 DEBUG warp::filters::ws - websocket start_send error: Trying to work with closed connection
+2025-07-02T20:32:31.748831300-04:00 ERROR writinggame_server::ws - websocket send error: Trying to work with closed connection
+2025-07-02T20:32:32.578338500-04:00 DEBUG hyper::proto::h1::io - parsed 12 headers
+2025-07-02T20:32:32.578498500-04:00 DEBUG hyper::proto::h1::conn - incoming body is empty
+2025-07-02T20:32:32.578845900-04:00 DEBUG hyper::proto::h1::io - flushed 166 bytes
+2025-07-02T20:32:32.579044300-04:00 INFO writinggame_server::ws - user connected: 23f7ff13-b0b2-486e-8f1f-7d4ea65d0166
+2025-07-02T20:32:32.584295500-04:00 DEBUG writinggame_server::ws - message received: {"action":"user/check_game","payload":{"join_code":"GMFQA","token":null},"token":null}
+2025-07-02T20:32:32.584619800-04:00 DEBUG writinggame_server::ws - sending message Text("{\"action\":\"user/check_game\",\"status\":\"success\",\"payload\":null}")
+2025-07-02T20:33:00.101369700-04:00 DEBUG writinggame_server::ws - message received: {"action":"system/ping","payload":null}
+2025-07-02T20:33:00.101623500-04:00 DEBUG writinggame_server::ws - sending message Text("{\"action\":\"system/pong\",\"status\":\"success\",\"payload\":null}")
+2025-07-02T20:33:25.108081900-04:00 DEBUG writinggame_server::ws - message received: {"action":"system/ping","payload":null}
+2025-07-02T20:33:25.108383700-04:00 DEBUG writinggame_server::ws - sending message Text("{\"action\":\"system/pong\",\"status\":\"success\",\"payload\":null}")
+2025-07-02T20:33:52.607578600-04:00 DEBUG writinggame_server::ws - message received: {"action":"system/ping","payload":null}
+2025-07-02T20:33:52.607882800-04:00 DEBUG writinggame_server::ws - sending message Text("{\"action\":\"system/pong\",\"status\":\"success\",\"payload\":null}")

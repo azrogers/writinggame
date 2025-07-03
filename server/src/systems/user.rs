@@ -128,13 +128,11 @@ impl UserJoinAction {
       .await,
     };
 
-    socket_manager
-      .broadcast_to_game(
-        &game,
-        "game/users".to_string(),
-        serde_json::to_value(state_update).unwrap(),
-      )
-      .await;
+    socket_manager.broadcast_to_game(
+      &game,
+      "game/users".to_string(),
+      serde_json::to_value(state_update).unwrap(),
+    );
 
     Ok(Some((
       "user/join".to_string(),
@@ -142,9 +140,9 @@ impl UserJoinAction {
         token,
         user_id,
         game_id: game.id,
-        game_mode: game.game_mode.clone(),
+        game_mode: game.game_mode,
         game_state: game.game_state,
-        game_type: game.game_type.clone(),
+        game_type: game.game_type,
         user_impl_state: user_impl_state_response,
         impl_state: game.impl_state.to_public_state(),
       }),
@@ -187,8 +185,8 @@ impl UserCheckGameAction {
       return Ok(Some((
         "user/check_game".to_string(),
         Box::new(Some(UserCheckGameResponse {
-          game_type: game.game_type.clone(),
-          game_mode: game.game_mode.clone(),
+          game_type: game.game_type,
+          game_mode: game.game_mode,
           should_rejoin,
         })),
       )));
@@ -227,21 +225,21 @@ impl UserRejoinAction {
 
     if let Some(vote_id) = socket_manager.database.game_to_vote.get(&game_id) {
       if let Some(vote) = socket_manager.database.votes.get(&vote_id) {
-        socket_manager
-          .send_to_user(user_id, "vote/start".to_string(), vote.to_client_response())
-          .await;
+        if !vote.user_votes.contains_key(&user_id) {
+          socket_manager.send_to_user(user_id, "vote/start".to_string(), vote.to_client_response());
+        }
       }
     }
 
     if let Some(prompt_id) = socket_manager.database.game_to_prompt.get(&game_id) {
       if let Some(prompt) = socket_manager.database.prompts.get(&prompt_id) {
-        socket_manager
-          .send_to_user(
+        if !prompt.user_responses.contains_key(&user_id) {
+          socket_manager.send_to_user(
             user_id,
             "prompt/start".to_string(),
             prompt.to_client_response(),
-          )
-          .await;
+          );
+        }
       }
     }
 

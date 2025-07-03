@@ -49,7 +49,9 @@ impl Database {
   pub async fn session_remove(&self, session_id: Uuid) {
     if let Some(state) = self.sessions.get(&session_id) {
       if let Some(game_id) = &state.game_id {
-        self.game_to_sessions.remove(game_id);
+        if let Some(mut sessions) = self.game_to_sessions.get_mut(game_id) {
+          sessions.remove(&session_id);
+        }
       }
 
       if let Some(user_id) = &state.user_id {
