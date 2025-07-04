@@ -87,8 +87,8 @@ const WriteSentence = (props: WriteSentenceProps) => {
         </GridColumn>
         <GridColumn width={14}>
           <Header size="medium">
-            Round {_roundCount} of {roundCount}
-          </Header>
+            Round {_roundCount} of {roundCount} - {_hostGameTopic.name}
+					</Header>
           {sentenceContent}
         </GridColumn>
       </Grid>

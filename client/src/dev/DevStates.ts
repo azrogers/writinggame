@@ -127,10 +127,4 @@ export function setDevState(state: DevStates)
     });
     Store.set(hostUserScores, scores);
 	}
-	else if (state == "paragraph")
-	{
-    Store.set(globalGameState, GlobalGameState.Game);
-    Store.set(isHosting, state == "vote_host");
-    Store.set(hostUiState, HostUIState.VoteSentence);
-	}
 }

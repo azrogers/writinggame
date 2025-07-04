@@ -15,8 +15,8 @@ import {
 import type { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import { Store } from "../../state/Store";
 import {
-	bronzeVoteScore,
-	goldVoteScore,
+  bronzeVoteScore,
+  goldVoteScore,
   roundCount,
   sentenceDisplayDuration,
   sentenceScoringDuration,
@@ -28,7 +28,7 @@ import {
   silverVoteScore,
   topicVoteDuration,
   topicVoteEndDuration,
-	winnerBonusScore,
+  winnerBonusScore,
 } from "./Config";
 import { MessageDispatcher } from "../../MessageDispatcher";
 import { SentenceGenerator } from "../../data/SentenceGenerator";
@@ -50,7 +50,7 @@ import {
   gameUsers,
 } from "../../state/GameState";
 import type { WriteGameImplState, WriteUserImplState } from "./ImplState";
-import { TtsLoader } from "../../data/TtsLoader";
+import { TtsLoader, type AudioFile } from "../../data/TtsLoader";
 import { inDevState } from "../../dev/DeveloperMode";
 import Sound from "../../Sound";
 import { formatSentence } from "../../lib/util";
@@ -73,6 +73,8 @@ export const hostGameTopic = atom<Topic | null>(null);
 
 export const winningSentenceUser = atom<string | null>(null);
 
+let preloadedTts: Promise<AudioFile> | undefined = undefined;
+
 export interface HostUserScore {
   userId: string;
   score: number;
@@ -90,6 +92,8 @@ export function onUiStateChange(
     return;
   }
   if (newState == HostUIState.None) {
+    preloadedTts = undefined;
+
     const users = Store.get(gameUsers);
     const scores: { [userId: string]: HostUserScore } = {};
     users.forEach((user) => {
@@ -104,7 +108,7 @@ export function onUiStateChange(
     Data.topics().then((topics) => {
       const topicsCopy = [...topics];
       const selectedTopics = [];
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 4; i++) { // TODO: change back to three
         const topic = topicsCopy.splice(
           Math.floor(topicsCopy.length * Math.random()),
           1
@@ -219,9 +223,8 @@ export function onUiStateChange(
     options.forEach((opt) => (optionsMap[opt.id] = opt.host_id));
     const scores = Store.get(hostUserScores);
     Store.get(voteUserVotes).forEach((userVote) => {
-			userVote.votes.forEach((vote) =>
-			{
-				const optionUserId = optionsMap[vote.option_id];
+      userVote.votes.forEach((vote) => {
+        const optionUserId = optionsMap[vote.option_id];
         const scoreObj = scores[optionUserId];
         let score = 0;
         if (vote.value == 1) {
@@ -232,18 +235,25 @@ export function onUiStateChange(
           score += bronzeVoteScore;
         }
         scoreObj.score += score;
-				scoreObj.scoreAdded = score;
-				if (optionUserId == Store.get(winningSentenceUser))
-				{
-					scoreObj.score += winnerBonusScore;
-				}
+        scoreObj.scoreAdded = score;
       });
-    });
+		});
+		
+		if (scores[Store.get(winningSentenceUser) || ""])
+		{
+			const scoreObj = scores[Store.get(winningSentenceUser) || ""];
+			scoreObj.score += winnerBonusScore;
+			scoreObj.scoreAdded += winnerBonusScore;
+		}
+
     Store.set(hostUserScores, scores);
   } else if (newState == HostUIState.DisplayFinalSentences) {
     const implState = Store.get(gameImplState) as WriteGameImplState;
     const text = implState.sentences.map((s) => s.text).join(" ");
-    TtsLoader.generate(text, Math.floor(Math.random() * 900)).then((audio) => {
+    Sound.musicStop();
+    (
+      preloadedTts ?? TtsLoader.generate(text, Math.floor(Math.random() * 900))
+    ).then((audio) => {
       Store.set(hostUiState, HostUIState.DisplayFinalSentences);
       TtsLoader.play(audio).then(() => {
         const expire = new Date();
@@ -271,9 +281,8 @@ export function onTimerExpire(
     return false;
   }
   if (state == HostUIState.ChooseTopic) {
-		if (Store.get(hostVoteState) == HostVoteState.Active)
-		{
-			Sound.sfxPlay("timer_end");
+    if (Store.get(hostVoteState) == HostVoteState.Active) {
+      Sound.sfxPlay("timer_end");
       setTimeout(() => {
         endVote(sendJsonMessage, Store.get(voteId) || "");
       }, 3000);
@@ -304,14 +313,14 @@ export function onTimerExpire(
     }
   } else if (state == HostUIState.WriteSentence) {
     if (Store.get(hostPromptState) == HostPromptState.Active) {
-			Sound.sfxPlay("timer_end");
+      Sound.sfxPlay("timer_end");
       setTimeout(() => {
         endPrompt(sendJsonMessage, Store.get(promptId) || "");
       }, 3000);
     }
   } else if (state == HostUIState.VoteSentence) {
     if (Store.get(hostVoteState) == HostVoteState.Active) {
-			Sound.sfxPlay("timer_end");
+      Sound.sfxPlay("timer_end");
       setTimeout(() => {
         endVote(sendJsonMessage, Store.get(voteId) || "");
       }, 3000);
@@ -323,8 +332,8 @@ export function onTimerExpire(
         winningSentence.host_id,
         ", winning text: ",
         winningSentence.content.text
-			);
-			Store.set(winningSentenceUser, winningSentence.host_id);
+      );
+      Store.set(winningSentenceUser, winningSentence.host_id);
       sendSentence(
         sendJsonMessage,
         winningSentence.content.text,
@@ -332,6 +341,11 @@ export function onTimerExpire(
       );
     }
   } else if (Store.get(hostUiState) == HostUIState.DisplayNewSentence) {
+    if (Store.get(gameRoundCount) == roundCount) {
+      const implState = Store.get(gameImplState) as WriteGameImplState;
+      const text = implState.sentences.map((s) => s.text).join(" ");
+      preloadedTts = TtsLoader.generate(text, Math.floor(Math.random() * 900));
+    }
     Store.set(hostUiState, HostUIState.Scoring);
   } else if (Store.get(hostUiState) == HostUIState.Scoring) {
     if (Store.get(gameRoundCount) >= roundCount) {
@@ -350,8 +364,8 @@ export function onTimerExpire(
       );
     }
   } else if (Store.get(hostUiState) == HostUIState.DisplayFinalSentences) {
-		Store.set(hostUiState, HostUIState.AwardWinner);
-		Sound.sfxPlay("victory");
+    Store.set(hostUiState, HostUIState.AwardWinner);
+    Sound.sfxPlay("victory");
   } else if (Store.get(hostUiState) == HostUIState.AwardWinner) {
     Store.set(hostUiState, HostUIState.Ended);
   }
@@ -402,9 +416,8 @@ function sendSentence(
   sendJsonMessage: SendJsonMessage,
   sentence: string,
   authorId: string
-)
-{
-	sentence = formatSentence(sentence);
+) {
+  sentence = formatSentence(sentence);
   MessageDispatcher.sendMessage(sendJsonMessage, "wg/sentence", {
     sentence,
     sentence_author: authorId,

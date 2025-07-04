@@ -1,7 +1,11 @@
-import {Howl, Howler} from 'howler';
+import {Howl} from 'howler';
 
 const MUSIC_TRACKS = [
 	"dill.opus",
+	"celebration.opus",
+	"funky_boxstep.opus",
+	"loopster.opus",
+	"shaving_mirror.opus"
 	//"groove-loop.opus"
 ];
 
@@ -55,7 +59,7 @@ class SoundInstance
 			"score": this.loadSfx("score.opus"),
 			"victory": this.loadSfx("victory.opus"),
 			"timer_tick": this.loadSfx("honk.opus"),
-			"timer_end": this.loadSfx("honk_long.opus")
+			"timer_end": this.loadSfx("ding.opus")
 		};
 	}
 
